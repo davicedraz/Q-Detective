@@ -9,13 +9,11 @@ public class Usuario {
     private String nome;
     private String email;
     private String bairro;
-    private String telefone;
 
-    public Usuario(String nome, String email, String bairro, String telefone) {
+    public Usuario(String nome, String email, String bairro) {
         this.nome = nome;
         this.email = email;
         this.bairro = bairro;
-        this.telefone = telefone;
     }
 
     public String getNome() {
@@ -40,13 +38,5 @@ public class Usuario {
 
     public void setBairro(String bairro) {
         this.bairro = bairro;
-    }
-
-    public String getTelefone() {
-        return telefone;
-    }
-
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
     }
 }

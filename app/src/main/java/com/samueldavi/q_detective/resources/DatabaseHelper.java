@@ -19,10 +19,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         public static final String NOME = "nome";
         public static final String EMAIL = "email";
         public static final String BAIRRO = "bairro";
-        public static final String TELEFONE = "telefone";
 
         public static final String[] COLUNAS_USUARIODB =
-                new String[]{NOME, EMAIL, BAIRRO, TELEFONE};
+                new String[]{NOME, EMAIL, BAIRRO};
     }
     public static class DenunciaDB {
         public static final String TABELA= "denuncia";
@@ -49,8 +48,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE " + UsuarioDB.TABELA +
                 "(" + UsuarioDB.NOME + " TEXT," +
                 UsuarioDB.EMAIL + " TEXT," +
-                UsuarioDB.BAIRRO + " TEXT," +
-                UsuarioDB.TELEFONE + " TEXT);");
+                UsuarioDB.BAIRRO + " TEXT);");
 
         db.execSQL("CREATE TABLE " + DenunciaDB.TABELA +
                 "(" + DenunciaDB._ID + " INTEGER PRIMARY KEY," +

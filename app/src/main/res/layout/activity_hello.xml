@@ -4,54 +4,65 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginStart="10dp"
-    android:layout_marginEnd="10dp"
+    android:layout_marginStart="30dp"
+    android:layout_marginEnd="30dp"
     android:orientation="vertical"
     android:gravity="center_horizontal"
-    tools:context="com.samueldavi.q_detective.HelloActivity">
+    tools:context="com.samueldavi.q_detective.activities.HelloActivity">
 
+    
+    <ImageView
+        android:layout_marginTop="20dp"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:src="@drawable/default_image"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Nome:"
+        android:textSize="15sp"
+        android:layout_marginTop="10dp"/>
 
     <EditText
         android:id="@+id/editTextNome"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
         android:inputType="textPersonName"
-        android:text="Digite o seu nome"
-        android:layout_marginBottom="10dp"
         android:textColor="#414141"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Email:"
+        android:textSize="15sp"/>
+
 
     <EditText
         android:id="@+id/editTextEmail"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
         android:inputType="textEmailAddress"
-        android:text="Digite seu email"
         android:textColor="#414141"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Em qual bairro de Quixadá você mora?"
+        android:textSize="15sp"/>
 
     <EditText
         android:id="@+id/editTextBairro"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
         android:inputType="text"
-        android:text="Qual bairro de Quixadá?"
-        android:textColor="#414141"/>
-
-    <EditText
-        android:id="@+id/editTextTelefone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="number"
-        android:text="Seu número de telefone"
         android:textColor="#414141"/>
 
     <Button
         android:id="@+id/buttonContinuar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:text="Continuar"/>
 
 

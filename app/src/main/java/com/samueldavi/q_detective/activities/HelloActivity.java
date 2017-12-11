@@ -1,12 +1,13 @@
-package com.samueldavi.q_detective;
+package com.samueldavi.q_detective.activities;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.samueldavi.q_detective.R;
 import com.samueldavi.q_detective.model.DAO.UsuarioDAO;
 import com.samueldavi.q_detective.model.Usuario;
 
@@ -16,7 +17,6 @@ public class HelloActivity extends AppCompatActivity {
     private EditText nome_usuario;
     private EditText email_usuario;
     private EditText bairro_usurio;
-    private EditText telefone_usuario;
 
     private Button buttonContinuar;
 
@@ -27,17 +27,19 @@ public class HelloActivity extends AppCompatActivity {
 
         usuarioDAO = new UsuarioDAO(this);
 
+//        if (usuarioDAO.listarUsuarios().size() > 0){
+//            redirect();
+//        }
+
        nome_usuario = (EditText) findViewById(R.id.editTextNome);
        email_usuario = (EditText) findViewById(R.id.editTextEmail);
        bairro_usurio = (EditText) findViewById(R.id.editTextBairro);
-       telefone_usuario = (EditText) findViewById(R.id.editTextTelefone);
 
        buttonContinuar = (Button) findViewById(R.id.buttonContinuar);
 
        novoUsuario();
 
     }
-
 
     public void novoUsuario(){
         buttonContinuar.setOnClickListener(new View.OnClickListener() {
@@ -48,16 +50,19 @@ public class HelloActivity extends AppCompatActivity {
                 String nome = nome_usuario.getText().toString();
                 String email = email_usuario.getText().toString();
                 String bairro = bairro_usurio.getText().toString();
-                String telefone = telefone_usuario.getText().toString();
 
-                Usuario usuario = new Usuario(nome, email, bairro, telefone);
+                Usuario usuario = new Usuario(nome, email, bairro);
 
-                usuarioDAO.inserirUsuario(usuario);
-
-               Log.d("NADA", usuarioDAO.buscarUsuario(usuario.getNome()).getNome());
-
+                if(usuarioDAO.inserirUsuario(usuario) > 0){
+                    redirect();
+                }
             }
         });
+    }
 
+
+    public void redirect(){
+        Intent intent = new Intent(this, DenunciaActivity.class);
+        startActivity(intent);
     }
 }
