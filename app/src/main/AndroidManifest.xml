@@ -17,6 +17,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.DenunciaActivity" />
+        <activity android:name=".activities.DenunciaCadastroActivity"></activity>
         <activity android:name=".activities.DetalhesActivity"></activity>
     </application>
 

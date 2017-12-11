@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.samueldavi.q_detective.activities.DenunciaCadastroActivity">
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/text_input_layout_cadastro"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="16dp">
+
+        <EditText
+            android:id="@+id/editText_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/label_description"
+            />
+    </android.support.design.widget.TextInputLayout>
+
+    <Spinner
+        android:id="@+id/spinner_category_cadastro"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/default_padding"
+        android:paddingEnd="@dimen/default_padding"
+        android:paddingTop="@dimen/default_padding"
+        android:layout_below="@+id/text_input_layout_cadastro"
+        android:entries="@array/spinner_array"
+        >
+    </Spinner>
+
+    <VideoView
+        android:id="@+id/videoView_cadastro"
+        android:layout_width="match_parent"
+        android:layout_height="256dp"
+        android:layout_marginTop="@dimen/default_padding"
+        android:layout_marginStart="@dimen/default_padding"
+        android:layout_marginEnd="@dimen/default_padding"
+        android:layout_below="@+id/spinner_category_cadastro"
+        />
+
+    <ImageView
+        android:id="@+id/imageView_cadastro"
+        android:layout_width="match_parent"
+        android:layout_height="256dp"
+        android:layout_marginTop="@dimen/default_padding"
+        android:layout_marginStart="@dimen/default_padding"
+        android:layout_marginEnd="@dimen/default_padding"
+        android:layout_below="@+id/spinner_category_cadastro"
+        />
+
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/floating_menu_cadastro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        >
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_addVideo_cadastro"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            app:fab_label="@string/fab_video_label"
+            />
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_addPhoto_cadastro"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            app:fab_label="@string/fab_photo_label"
+            />
+
+    </com.github.clans.fab.FloatingActionMenu>
+
+
+
+</RelativeLayout>

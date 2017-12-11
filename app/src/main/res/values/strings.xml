@@ -1,4 +1,14 @@
 <resources>
     <string name="app_name">Q-Detective</string>
     <string name="is_first_time_ever">IS_FIRST_TIME_EVER</string>
+    <string name="label_description">Descrição</string>
+    <string name="fab_video_label">Gravar Vídeo</string>
+    <string name="fab_photo_label">Tirar uma foto</string>
+
+    <string-array name="spinner_array">
+        <item>Via Públicas de Acesso</item>
+        <item>Equipamentos Comunitários</item>
+        <item>Limpeza Urbana e Saneamento</item>
+    </string-array>
+
 </resources>
