@@ -1,9 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginStart="10dp"
+    android:layout_marginEnd="10dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="10dp"
     tools:context="com.samueldavi.q_detective.activities.DetalhesActivity">
 
-</android.support.constraint.ConstraintLayout>
+    <ImageView
+        android:id="@+id/iconeCategoria"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/default_image"/>
+
+    <TextView
+        android:id="@+id/textViewCategoria"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="10dp"
+        android:textSize="18sp"
+        android:layout_toRightOf="@id/iconeCategoria"
+        android:text="Nome da categoria completa da denuncia"/>
+
+    <TextView
+        android:id="@+id/textViewData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/textViewCategoria"
+        android:text="Resgistrada em: 12/12/1996"/>
+
+    <TextView
+        android:id="@+id/textViewUsuarioDenuncia"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/textViewData"
+        android:text="Autor: Usuario"/>
+
+    <TextView
+        android:id="@+id/textViewDescricao"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="10dp"
+        android:textSize="15sp"
+        android:layout_below="@id/iconeCategoria"
+        android:text="Descricao completa da denuncia"/>
+
+
+    <ImageView
+        android:id="@+id/imageViewMidia"
+        android:layout_width="wrap_content"
+        android:layout_height="240dp"
+        android:layout_below="@id/textViewDescricao"
+        android:src="@drawable/default_image"/>
+
+    <VideoView
+        android:id="@+id/videoViewMidia"
+        android:layout_width="wrap_content"
+        android:layout_height="240dp"
+        android:layout_below="@id/textViewDescricao"/>
+
+    <WebView
+        android:id="@+id/webViewLocalizacao"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginTop="10dp"
+        android:layout_alignParentBottom="true">
+
+    </WebView>
+
+
+
+
+
+
+
+</RelativeLayout>
