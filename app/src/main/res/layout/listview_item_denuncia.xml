@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/descricao_denuncia"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/txtView_categoria_data_denuncia"
+        android:layout_centerVertical="true"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:text="Testo de descrição exemplo."
+        />
+
+    <TextView
+        android:id="@+id/txtView_categoria_data_denuncia"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="center"
+        android:layout_centerVertical="true"
+        android:drawableTop="@drawable/ic_launcher_foreground"
+        android:text="00/00/00" />
+
+</RelativeLayout>

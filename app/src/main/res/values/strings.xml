@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Q-Detective</string>
+    <string name="is_first_time_ever">IS_FIRST_TIME_EVER</string>
 </resources>
