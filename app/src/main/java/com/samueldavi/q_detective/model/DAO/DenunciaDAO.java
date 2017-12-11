@@ -25,15 +25,12 @@ public class DenunciaDAO {
 
 
 
-
-
-
-//    public boolean removerDenuncia(Integer id) {
-//        db = helper.getWritableDatabase();
-//        String where[] = new String[]{id.toString()};
-//        int removidos = db.delete(DatabaseHelper.Contato.TABELA, "_id = ?", where);
-//        return removidos > 0;
-//    }
+    public boolean removerDenuncia(Integer id) {
+        db = helper.getWritableDatabase();
+        String where[] = new String[]{id.toString()};
+        int removidos = db.delete(DatabaseHelper.DenunciaDB.TABELA, "_id = ?", where);
+        return removidos > 0;
+    }
 
     public Denuncia criarDenuncia (Cursor cursor){
         Integer id = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.DenunciaDB._ID));
