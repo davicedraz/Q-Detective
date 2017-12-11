@@ -8,7 +8,11 @@ import android.database.sqlite.SQLiteDatabase;
 import com.samueldavi.q_detective.model.Usuario;
 import com.samueldavi.q_detective.resources.DatabaseHelper;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by davicedraz on 10/12/2017.
@@ -21,27 +25,48 @@ public class UsuarioDAO {
 
     public UsuarioDAO (Context context) {
         this.helper = new DatabaseHelper(context);
+        db = helper.getReadableDatabase();
+        cursor = db.query(DatabaseHelper.UsuarioDB.TABELA,
+                DatabaseHelper.UsuarioDB.COLUNAS_USUARIODB,
+                null, null, null, null, null);
     }
 
 
-    public boolean inserirContato(Usuario usuario) {
-        ContentValues values = new ContentValues();
-        boolean flag = false;
+    public List<Map<String, Object>> listarUsuarios() {
 
-        if(buscarUsuario(usuario.getNome()) != null){
+        List<Map<String, Object>> usuarios = new ArrayList<>();
+
+        while (cursor.moveToNext()) {
+            String nome = cursor.getString(cursor.getColumnIndex(DatabaseHelper.UsuarioDB.NOME));
+            String email = cursor.getString(cursor.getColumnIndex(DatabaseHelper.UsuarioDB.EMAIL));
+            String bairro = cursor.getString(cursor.getColumnIndex(DatabaseHelper.UsuarioDB.BAIRRO));
+            String telefone = cursor.getString(cursor.getColumnIndex(DatabaseHelper.UsuarioDB.TELEFONE));
+
+            Map<String, Object> usuario = new HashMap<>();
+
+            usuario.put(DatabaseHelper.UsuarioDB.NOME, nome);
+            usuario.put(DatabaseHelper.UsuarioDB.EMAIL, email);
+            usuario.put(DatabaseHelper.UsuarioDB.BAIRRO, bairro);
+            usuario.put(DatabaseHelper.UsuarioDB.TELEFONE, telefone);
+
+            usuarios.add(usuario);
+        }
+        cursor.close();
+        return usuarios;
+    }
+
+
+    public long inserirUsuario(Usuario usuario) {
+        ContentValues values = new ContentValues();
+
             values.put(DatabaseHelper.UsuarioDB.NOME, usuario.getNome());
             values.put(DatabaseHelper.UsuarioDB.EMAIL, usuario.getEmail());
             values.put(DatabaseHelper.UsuarioDB.BAIRRO, usuario.getBairro());
             values.put(DatabaseHelper.UsuarioDB.TELEFONE, usuario.getTelefone());
 
             db = helper.getWritableDatabase();
-            db.insert(DatabaseHelper.UsuarioDB.TABELA, null, values);
-            flag = true;
-        }
-        else{
-            flag = false;
-        }
-        return flag;
+            long qtdInseridos = db.insert(DatabaseHelper.UsuarioDB.TABELA, null, values);
+            return qtdInseridos;
     }
 
 

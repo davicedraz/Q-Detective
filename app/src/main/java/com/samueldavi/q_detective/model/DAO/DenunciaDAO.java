@@ -95,12 +95,8 @@ public class DenunciaDAO {
         return null;
     }
 
-    public boolean salvarDenuncia(Denuncia denuncia) {
+    public long salvarDenuncia(Denuncia denuncia) {
         ContentValues values = new ContentValues();
-
-        boolean flag = false;
-
-        if (buscarDenunciaPorID(denuncia.getId()) != null) {
 
             if (denuncia.getId() > 0) {
                 values.put(DatabaseHelper.DenunciaDB._ID, denuncia.getId());
@@ -115,12 +111,9 @@ public class DenunciaDAO {
             values.put(DatabaseHelper.DenunciaDB.CATEGORIA, denuncia.getCategoria());
 
             db = helper.getWritableDatabase();
-            db.insert(DatabaseHelper.DenunciaDB.TABELA, null, values);
 
-            flag = true;
-        }
-
-        return flag;
+            long qtdInseridos = db.insert(DatabaseHelper.DenunciaDB.TABELA, null, values);
+            return qtdInseridos;
     }
 
     public boolean atualizarDenuncia(Denuncia denuncia) {
