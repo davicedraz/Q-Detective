@@ -1,7 +1,6 @@
 package com.samueldavi.q_detective.activities;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
@@ -48,7 +47,6 @@ public class DenunciaActivity extends AppCompatActivity {
         DenunciaListViewAdapter adapter = new DenunciaListViewAdapter(denuncias, (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE));
 
         denunciasListview.setAdapter(adapter);
-
 
         manageFloatingButton();
     }
