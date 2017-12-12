@@ -23,6 +23,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginBottom="10dp"
         android:textSize="18sp"
+        android:textStyle="bold"
         android:layout_toRightOf="@id/iconeCategoria"
         android:text="Nome da categoria completa da denuncia"/>
 
@@ -58,13 +59,15 @@
         android:layout_width="wrap_content"
         android:layout_height="240dp"
         android:layout_below="@id/textViewDescricao"
+        android:visibility="gone"
         android:src="@drawable/default_image"/>
 
     <VideoView
         android:id="@+id/videoViewMidia"
         android:layout_width="wrap_content"
         android:layout_height="240dp"
-        android:layout_below="@id/textViewDescricao"/>
+        android:layout_below="@id/textViewDescricao"
+        android:visibility="gone"/>
 
     <WebView
         android:id="@+id/webViewLocalizacao"
@@ -72,11 +75,7 @@
         android:layout_height="100dp"
         android:layout_marginTop="10dp"
         android:layout_alignParentBottom="true">
-
     </WebView>
-
-
-
 
 
 

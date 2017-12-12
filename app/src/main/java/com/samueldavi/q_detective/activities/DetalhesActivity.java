@@ -1,18 +1,130 @@
 package com.samueldavi.q_detective.activities;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.webkit.WebView;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.VideoView;
 
 import com.samueldavi.q_detective.R;
+import com.samueldavi.q_detective.model.Denuncia;
+
+import java.io.FileNotFoundException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class DetalhesActivity extends AppCompatActivity {
+
+    private ImageView iconeCategoria;
+    private TextView textViewCategoria;
+    private TextView textViewData;
+    private TextView textViewUsuarioDenuncia;
+    private TextView textViewDescricao;
+
+    private ImageView imageViewMidia;
+    private VideoView videoViewMidia;
+
+    private WebView webViewLocalizacao;
+
+    private Denuncia denuncia;
+
+    private SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy");
+
+    private String urlBase = "http://maps.googleapis.com/maps/api/staticmap?size=400x400&sensor=true&markers=color:red|%s,%s";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detalhes);
+
+        iconeCategoria = (ImageView) findViewById(R.id.iconeCategoria);
+        textViewCategoria = (TextView) findViewById(R.id.textViewCategoria);
+        textViewData = (TextView) findViewById(R.id.textViewData);
+        textViewUsuarioDenuncia = (TextView) findViewById(R.id.textViewUsuarioDenuncia);
+        textViewDescricao = (TextView) findViewById(R.id.textViewDescricao);
+
+        imageViewMidia = (ImageView) findViewById(R.id.imageViewMidia);
+        videoViewMidia = (VideoView) findViewById(R.id.videoViewMidia);
+
+        webViewLocalizacao = (WebView) findViewById(R.id.webViewLocalizacao);
+
+        //settings webView
+        webViewLocalizacao.getSettings().setJavaScriptEnabled(true);
+        webViewLocalizacao.getSettings().setSupportZoom(true);
+        webViewLocalizacao.getSettings().setBuiltInZoomControls(false);
+        webViewLocalizacao.setBackgroundColor(Color.parseColor("#FFFFFF"));
+        webViewLocalizacao.getSettings().setUseWideViewPort(true);
+        webViewLocalizacao.getSettings().setLoadWithOverviewMode(false);
+        webViewLocalizacao.setInitialScale(15);
+
+        //denuncia = null; //TODO: Instanciar objeto de acordo com com item 'denuncia', na lista, que chamou esta activity
+
+        Date dates = new Date();
+        dates.setTime(12989809);
+
+        denuncia = new Denuncia(1, "Tinha um buraco no meio da estrada", dates, -4.9717468, -39.0198781, "imagem.jpeg", "eu", 0);
+
+
+        preencherCampos();
+
     }
 
+    public void preencherCampos(){
+
+        //De acordo com o tipo da categoria
+        if (denuncia.getCategoria() == 0){
+            iconeCategoria.setImageResource(R.drawable.ic_road);
+            textViewCategoria.setText("Vias públicas de acesso");
+        }
+        else if(denuncia.getCategoria() == 1){
+            iconeCategoria.setImageResource(R.drawable.ic_park);
+            textViewCategoria.setText("Equipamentos comunitários");
+        }
+        else if(denuncia.getCategoria() == 2){
+            iconeCategoria.setImageResource(R.drawable.ic_sewer);
+            textViewCategoria.setText("Equipamentos comunitários");
+        }
+
+        String data = fmt.format(denuncia.getData());
+        textViewData.setText("Registrada em: " + data);
+
+        textViewUsuarioDenuncia.setText("Autor: " + denuncia.getUsuario());
+        textViewDescricao.setText(denuncia.getDescricao());
+
+        Uri uri = Uri.parse(denuncia.getUriMidia());
+        String path = uri.getPath();
+
+        String[] parts = path.split(".");
+        String midiaFormat = parts[1];
+
+        if(midiaFormat.equals("mp4")){
+            videoViewMidia.setVisibility(View.VISIBLE);
+            videoViewMidia.setVideoPath(path);
+//            TODO função de acionar a visualização do vídeo
+         }
+        else if(midiaFormat.equals("jpeg")){
+            imageViewMidia.setVisibility(View.VISIBLE);
+
+            Bitmap bitmap = null;
+            try {
+                bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(uri));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
+            imageViewMidia.setImageBitmap(bitmap);
+        }
+
+        String url = String.format(urlBase, denuncia.getLongitude(), denuncia.getLatitude());
+        webViewLocalizacao.loadUrl(url);
+
+    }
 
 
 }
