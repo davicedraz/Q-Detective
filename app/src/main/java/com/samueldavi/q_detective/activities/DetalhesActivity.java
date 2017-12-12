@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.VideoView;
 
 import com.samueldavi.q_detective.R;
+import com.samueldavi.q_detective.model.DAO.DenunciaDAO;
 import com.samueldavi.q_detective.model.Denuncia;
 
 import java.io.FileNotFoundException;
@@ -33,6 +34,7 @@ public class DetalhesActivity extends AppCompatActivity {
     private WebView webViewLocalizacao;
 
     private Denuncia denuncia;
+    private DenunciaDAO denunciaDAO;
 
     private SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -63,20 +65,15 @@ public class DetalhesActivity extends AppCompatActivity {
         webViewLocalizacao.getSettings().setLoadWithOverviewMode(false);
         webViewLocalizacao.setInitialScale(15);
 
-        //denuncia = null; //TODO: Instanciar objeto de acordo com com item 'denuncia', na lista, que chamou esta activity
+        int position = getIntent().getIntExtra("position", 0);
+        denunciaDAO = new DenunciaDAO(this);
 
-        Date dates = new Date();
-        dates.setTime(12989809);
-
-        denuncia = new Denuncia(1, "Tinha um buraco no meio da estrada", dates, -4.9717468, -39.0198781, "imagem.jpeg", "eu", 0);
-
+        denuncia = denunciaDAO.listar().get(position);
 
         preencherCampos();
-
     }
 
     public void preencherCampos(){
-
         //De acordo com o tipo da categoria
         if (denuncia.getCategoria() == 0){
             iconeCategoria.setImageResource(R.drawable.ic_road);
@@ -91,12 +88,22 @@ public class DetalhesActivity extends AppCompatActivity {
             textViewCategoria.setText("Equipamentos comunitários");
         }
 
+        //data da denuncia
         String data = fmt.format(denuncia.getData());
         textViewData.setText("Registrada em: " + data);
 
+        //usuario da denuncia
         textViewUsuarioDenuncia.setText("Autor: " + denuncia.getUsuario());
         textViewDescricao.setText(denuncia.getDescricao());
 
+        //localizacao da denuncia
+        String url = String.format(urlBase, denuncia.getLongitude(), denuncia.getLatitude());
+        webViewLocalizacao.loadUrl(url);
+
+        setupMidia();
+    }
+
+    public void setupMidia(){
         Uri uri = Uri.parse(denuncia.getUriMidia());
         String path = uri.getPath();
 
@@ -107,7 +114,7 @@ public class DetalhesActivity extends AppCompatActivity {
             videoViewMidia.setVisibility(View.VISIBLE);
             videoViewMidia.setVideoPath(path);
 //            TODO função de acionar a visualização do vídeo
-         }
+        }
         else if(midiaFormat.equals("jpeg")){
             imageViewMidia.setVisibility(View.VISIBLE);
 
@@ -120,11 +127,6 @@ public class DetalhesActivity extends AppCompatActivity {
 
             imageViewMidia.setImageBitmap(bitmap);
         }
-
-        String url = String.format(urlBase, denuncia.getLongitude(), denuncia.getLatitude());
-        webViewLocalizacao.loadUrl(url);
-
     }
-
 
 }

@@ -1,5 +1,6 @@
 package com.samueldavi.q_detective.activities;
 
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,13 +16,15 @@ import android.widget.ListView;
 
 import com.samueldavi.q_detective.DenunciaListViewAdapter;
 import com.samueldavi.q_detective.R;
+import com.samueldavi.q_detective.fragments.ConfirmAlertDialog;
 import com.samueldavi.q_detective.fragments.MenuAlertDialog;
 import com.samueldavi.q_detective.model.DAO.DenunciaDAO;
 import com.samueldavi.q_detective.model.Denuncia;
 
 import java.util.List;
 
-public class DenunciaActivity extends AppCompatActivity implements MenuAlertDialog.DialogListener, AdapterView.OnItemClickListener {
+public class DenunciaActivity extends AppCompatActivity implements MenuAlertDialog.DialogListener,
+        AdapterView.OnItemClickListener, ConfirmAlertDialog.DialogConfirmListener {
 
     private ListView denunciasListview;
     private DenunciaDAO denunciasDatabase;
@@ -83,25 +86,6 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
         denuncias = denunciasDatabase.listar();
     }
 
-
-
-    @Override
-    public void onDialogDetalhesClick(int position) {
-        Intent intent = new Intent(this, DetalhesActivity.class);
-        startActivity(intent);
-
-    }
-
-    @Override
-    public void onDialogEditarClick(int position) {
-
-    }
-
-    @Override
-    public void ondDialogRemoverClick(int position) {
-
-    }
-
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
         MenuAlertDialog fragmentDialog = new MenuAlertDialog();
@@ -112,4 +96,47 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
 
         fragmentDialog.show(this.getFragmentManager(), "menu");
     }
+
+
+    @Override
+    public void onDialogDetalhesClick(int position) {
+        Intent intent = new Intent(this, DetalhesActivity.class);
+        intent.putExtra("position", position);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onDialogEditarClick(int position) {
+
+    }
+
+
+    @Override
+    public void ondDialogRemoverClick(int position) {
+        DialogFragment confirmDialogFragment = new ConfirmAlertDialog();
+
+        Bundle bundle = new Bundle();
+        bundle.putInt("position", position);
+        confirmDialogFragment.setArguments(bundle);
+
+        confirmDialogFragment.show(this.getFragmentManager(), "confirma");
+    }
+
+    @Override
+    public void onDialogSimClick(DialogFragment dialog) {
+        int position = dialog.getArguments().getInt("position");
+        denunciasDatabase.removerDenuncia(denunciasDatabase.listar().get(position).getId());
+
+
+        //não sei fazer aquele negocio lá pra voltar pra activity depois de excluir kkkkk
+        finish();
+        startActivity(this.getIntent());
+    }
+
+    @Override
+    public void onDialogCancelarClick(DialogFragment dialog) {
+        //do nothing
+    }
+
+
 }
