@@ -1,11 +1,19 @@
 package com.samueldavi.q_detective.activities;
 
+import android.Manifest;
 import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -17,6 +25,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.samueldavi.q_detective.adapter.DenunciaListViewAdapter;
 import com.samueldavi.q_detective.R;
@@ -26,7 +35,9 @@ import com.samueldavi.q_detective.model.DAO.DenunciaDAO;
 import com.samueldavi.q_detective.model.DAO.UsuarioDAO;
 import com.samueldavi.q_detective.model.Denuncia;
 import com.samueldavi.q_detective.model.Usuario;
+import com.samueldavi.q_detective.resources.WebServiceUtils;
 
+import java.io.File;
 import java.util.List;
 
 public class DenunciaActivity extends AppCompatActivity implements MenuAlertDialog.DialogListener,
@@ -41,6 +52,10 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
     private ImageView noItensImage;
     private UsuarioDAO userDatabase;
     private Usuario user;
+
+    private boolean permisaoInternet = false;
+    private final String url = " http://35.226.50.35/QDetective/";
+    private ProgressDialog load;
 
     private void setPreferences(Context context){
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -143,14 +158,6 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
     }
 
 
-
-
-
-
-
-
-
-
     //DIALOG SHIT
 
 
@@ -175,7 +182,13 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
 
     @Override
     public void onDialogEnviarWebserviceClick(int position) {
+        getPermissaoDaInternet();
 
+        if(permisaoInternet){
+            Denuncia denuncia = denuncias.get(position);
+            UploadDenuncia upload = new UploadDenuncia();
+            upload.execute(denuncia);
+        }
     }
 
     @Override
@@ -214,5 +227,59 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
         //do nothing
     }
 
+
+    public boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
+
+    private void getPermissaoDaInternet() {
+        boolean internet = ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED;
+        boolean redeStatus = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED;
+        if (internet && redeStatus) {
+            if (isOnline()) {
+                permisaoInternet = true;
+                return;
+            } else {
+                permisaoInternet = false;
+                Toast.makeText(this, "Sem conexão de Internet.", Toast.LENGTH_LONG).show();
+            }
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{
+                            Manifest.permission.INTERNET,
+                            Manifest.permission.ACCESS_NETWORK_STATE},
+                    1);
+        }
+    }
+
+    class UploadDenuncia extends AsyncTask<Denuncia, Void, WebServiceUtils> {
+
+        @Override
+        protected void onPreExecute() {
+            load = ProgressDialog.show(DenunciaActivity.this, "Por favor Aguarde ...", "Recuperando Informações do Servidor...");
+        }
+
+        @Override
+        protected WebServiceUtils doInBackground(Denuncia... denuncias) {
+            WebServiceUtils webService = new WebServiceUtils();
+            Denuncia denuncia = denuncias[0];
+            String urlDados = url + "denuncias";
+            if (webService.sendDenunciaJson(urlDados, denuncia)) {
+                urlDados = url + "arquivos/postFotoBase64";
+                webService.uploadImagemBase64(urlDados, new File(denuncia.getUriMidia()));
+            }
+            return webService;
+        }
+
+        @Override
+        protected void onPostExecute(WebServiceUtils webService) {
+            Toast.makeText(getApplicationContext(),
+                    webService.getRespostaServidor(),
+                    Toast.LENGTH_LONG).show();
+            load.dismiss();
+        }
+    }
 
 }
