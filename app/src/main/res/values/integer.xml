@@ -1,11 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <integer
-        name="REQUEST_IMAGE_CAPTURE">3</integer>
 
-    <integer
-        name="REQUEST_VIDEO_CAPTURE">2</integer>
-
-    <integer
-        name="REQUEST_PERMISSIONS">1</integer>
 </resources>

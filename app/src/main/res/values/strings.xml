@@ -8,6 +8,7 @@
     <string name="no_item_first_time">Você ainda não realizou nenhuma denúncia.</string>
     <string name="no_item_bottom_text">Continue denuciando os problemas da sua cidade.</string>
     <string name="no_item_top_text">Bom Trabalho!</string>
+    <string name="KEY_EDIT">EDIT_DENUNCIA</string>
 
     <string-array name="spinner_array">
         <item>Via Públicas de Acesso</item>

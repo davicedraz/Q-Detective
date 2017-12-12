@@ -176,7 +176,7 @@ public class DenunciaDAO {
         List<Denuncia> denuncias = listar();
         int id;
         if(!denuncias.isEmpty()){
-            id = denuncias.get(denuncias.size()).getId() + 1;
+            id = denuncias.get(denuncias.size()-1).getId() + 1;
         }else{
             id = 1;
         }

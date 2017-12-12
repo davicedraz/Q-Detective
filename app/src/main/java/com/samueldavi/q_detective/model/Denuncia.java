@@ -1,12 +1,13 @@
 package com.samueldavi.q_detective.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by davicedraz on 10/12/2017.
  */
 
-public class Denuncia {
+public class Denuncia implements Serializable{
 
     private Integer id;
     private String descricao;

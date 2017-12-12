@@ -76,12 +76,12 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
         userDatabase = new UsuarioDAO(this);
         denunciasDatabase = new DenunciaDAO(this);
 
+        findViews();
         setPreferences(this);
         getUserFromDatabase();
         getDenunciasFromDatabase();
         setupDenucias();
 
-        denunciasListview = (ListView) findViewById(R.id.listview_denuncias);
         DenunciaListViewAdapter adapter = new DenunciaListViewAdapter(denuncias, (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE));
 
         denunciasListview.setAdapter(adapter);
@@ -90,6 +90,13 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
         denunciasListview.setOnItemClickListener(this);
 
         manageFloatingButton();
+    }
+
+    private void findViews() {
+        noItensTextTop = findViewById(R.id.text_top_empty_denuncia_activity);
+        noItensTextBottom = findViewById(R.id.text_bottom_empty_denuncia_activity);
+        noItensImage = findViewById(R.id.img_empty_denuncia_activity);
+        denunciasListview =  findViewById(R.id.listview_denuncias);
     }
 
     private void getUserFromDatabase() {
@@ -126,7 +133,7 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
             public void onClick(View view) {
                 Intent intent = new Intent(DenunciaActivity.this, DenunciaCadastroActivity.class);
                 intent.putExtra(getString(R.string.KEY_USER_EXTRA), user.getNome());
-                startActivityForResult(intent, 1);
+                startActivityForResult(intent, getResources().getInteger(R.integer.ACTIVITY_CADASTRO));
             }
         });
     }
@@ -173,7 +180,10 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
 
     @Override
     public void onDialogEditarClick(int position) {
-
+        Intent intent = new Intent(DenunciaActivity.this, DenunciaCadastroActivity.class);
+        intent.putExtra(getString(R.string.KEY_USER_EXTRA), user.getNome());
+        intent.putExtra(getString(R.string.KEY_EDIT), denuncias.get(position));
+        startActivityForResult(intent, getResources().getInteger(R.integer.ACTIVITY_CADASTRO_EDIT));
     }
 
 

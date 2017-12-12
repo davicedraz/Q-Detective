@@ -31,6 +31,7 @@ import com.samueldavi.q_detective.model.Denuncia;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.net.URI;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -48,16 +49,53 @@ public class DenunciaCadastroActivity extends AppCompatActivity implements Locat
     private boolean hasSdCard;
     private LocationManager locationManager;
     private Location location;
-    DenunciaDAO denunciaDatabase;
+    private DenunciaDAO denunciaDatabase;
+    private Denuncia editingDenuncia;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_denuncia_cadastro);
+
         denunciaDatabase = new DenunciaDAO(this);
+        editingDenuncia = (Denuncia) getIntent().getSerializableExtra(getString(R.string.KEY_EDIT));
+        findViews();
+        setupView();
 
         manageFabButtons();
         setupSpinner();
+    }
+
+    private void findViews() {
+        description = findViewById(R.id.editText_description);
+        category = findViewById(R.id.spinner_category_cadastro);
+        videoView = findViewById(R.id.videoView_cadastro);
+        videoFab = findViewById(R.id.fab_addVideo_cadastro);
+        photoFab = findViewById(R.id.fab_addPhoto_cadastro);
+        fabMenu = findViewById(R.id.floating_menu_cadastro);
+        imgView = findViewById(R.id.imageView_cadastro);
+    }
+
+    private void setupView() {
+        if(editingDenuncia != null){
+            description.setText(editingDenuncia.getDescricao());
+            category.setSelection(editingDenuncia.getCategoria());
+
+            String mediaPath = Uri.parse(editingDenuncia.getUriMidia()).getPath();
+            if(mediaPath.split(".")[1].equals("mp4")){
+                imgView.setVisibility(View.GONE);
+                videoView.setVisibility(View.VISIBLE);
+                videoView.setVideoPath(mediaPath);
+            }else{
+                videoView.setVisibility(View.GONE);
+                imgView.setVisibility(View.VISIBLE);
+                try {
+                    imgView.setImageBitmap(BitmapFactory.decodeStream(getContentResolver().openInputStream(Uri.parse(editingDenuncia.getUriMidia()))));
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     private void setupSpinner() {
@@ -184,7 +222,7 @@ public class DenunciaCadastroActivity extends AppCompatActivity implements Locat
                 Double longitude = location.getLongitude();
                 Double latitude = location.getLatitude();
                 String uriMidia = uri.toString();
-                String usuario = getIntent().getStringExtra(getString(R.string.KEY_USER_EXTRA));;
+                String usuario = getIntent().getStringExtra(getString(R.string.KEY_USER_EXTRA));
                 int categoria = category.getSelectedItemPosition();
 
 
