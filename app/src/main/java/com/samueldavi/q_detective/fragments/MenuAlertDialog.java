@@ -14,16 +14,16 @@ public class MenuAlertDialog extends DialogFragment{
 
     public interface DialogListener{
         public void onDialogDetalhesClick(int position);
+        public void onDialogEnviarWebserviceClick(int position);
         public void onDialogEditarClick(int position);
         public void ondDialogRemoverClick(int position);
     }
-
 
     private DialogListener listener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState){
-        final CharSequence[] items = {"Mais detalhes", "Editar", "Remover"};
+        final CharSequence[] items = {"Mais detalhes", "Enviar para webservice", "Editar", "Remover"};
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Opções").setItems(items, itemClick);
         listener = (DialogListener) getActivity();
@@ -40,9 +40,12 @@ public class MenuAlertDialog extends DialogFragment{
                     listener.onDialogDetalhesClick(position);
                     break;
                 case 1:
-                    listener.onDialogEditarClick(position);
+                    listener.onDialogEnviarWebserviceClick(position);
                     break;
                 case 2:
+                    listener.onDialogEditarClick(position);
+                    break;
+                case 3:
                     listener.ondDialogRemoverClick(position);
                     break;
             }

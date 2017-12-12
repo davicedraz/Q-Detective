@@ -106,6 +106,11 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
     }
 
     @Override
+    public void onDialogEnviarWebserviceClick(int position) {
+
+    }
+
+    @Override
     public void onDialogEditarClick(int position) {
 
     }
