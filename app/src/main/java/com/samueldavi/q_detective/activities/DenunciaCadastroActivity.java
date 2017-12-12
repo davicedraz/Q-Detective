@@ -145,6 +145,7 @@ public class DenunciaCadastroActivity extends AppCompatActivity implements Locat
         return pathMidia;
     }
 
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (requestCode == getResources().getInteger(R.integer.REQUEST_VIDEO_CAPTURE)&& resultCode == RESULT_OK) {
