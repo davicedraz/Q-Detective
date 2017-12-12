@@ -18,8 +18,7 @@ public class Denuncia {
     private int categoria;
 
 
-    public Denuncia(Integer id, String descricao, Date data, Double longitude, Double latitude, String uriMidia, String usuario, int categoria) {
-        this.id = id;
+    public Denuncia(String descricao, Date data, Double longitude, Double latitude, String uriMidia, String usuario, int categoria) {
         this.descricao = descricao;
         this.data = data;
         this.longitude = longitude;

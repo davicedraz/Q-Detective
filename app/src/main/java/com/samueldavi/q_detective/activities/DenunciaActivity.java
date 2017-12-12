@@ -14,7 +14,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.samueldavi.q_detective.DenunciaListViewAdapter;
+import com.samueldavi.q_detective.adapter.DenunciaListViewAdapter;
 import com.samueldavi.q_detective.R;
 import com.samueldavi.q_detective.fragments.ConfirmAlertDialog;
 import com.samueldavi.q_detective.fragments.MenuAlertDialog;

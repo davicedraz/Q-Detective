@@ -71,13 +71,13 @@ public class DenunciaDAO {
                 DatabaseHelper.DenunciaDB.COLUNAS_DENUNCIADB,
                 null, null, null, null, null);
 
-        List<Denuncia> contatos = new ArrayList<>();
+        List<Denuncia> denuncias = new ArrayList<>();
 
         while (cursor.moveToNext()) {
-            contatos.add(this.criarDenuncia(cursor));
+            denuncias.add(this.criarDenuncia(cursor));
         }
         cursor.close();
-        return contatos;
+        return denuncias;
     }
 
     public Denuncia buscarDenunciaPorID(Integer id) {
@@ -97,7 +97,7 @@ public class DenunciaDAO {
 
     public long salvarDenuncia(Denuncia denuncia) {
         ContentValues values = new ContentValues();
-
+            denuncia.setId(generateId());
             if (denuncia.getId() > 0) {
                 values.put(DatabaseHelper.DenunciaDB._ID, denuncia.getId());
             }
@@ -170,6 +170,17 @@ public class DenunciaDAO {
     public void close() {
         helper.close();
         db = null;
+    }
+
+    private Integer generateId(){
+        List<Denuncia> denuncias = listar();
+        int id;
+        if(!denuncias.isEmpty()){
+            id = denuncias.get(denuncias.size()).getId() + 1;
+        }else{
+            id = 1;
+        }
+        return id;
     }
 
 }

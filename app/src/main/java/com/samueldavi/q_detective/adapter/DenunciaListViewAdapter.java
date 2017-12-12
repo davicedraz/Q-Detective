@@ -1,4 +1,4 @@
-package com.samueldavi.q_detective;
+package com.samueldavi.q_detective.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.samueldavi.q_detective.R;
 import com.samueldavi.q_detective.model.Denuncia;
 
 import java.text.SimpleDateFormat;

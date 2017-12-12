@@ -4,6 +4,7 @@
     <string name="label_description">Descrição</string>
     <string name="fab_video_label">Gravar Vídeo</string>
     <string name="fab_photo_label">Tirar uma foto</string>
+    <string name="KEY_USER_EXTRA">USER_INTENT_EXTRA</string>
 
     <string-array name="spinner_array">
         <item>Via Públicas de Acesso</item>
