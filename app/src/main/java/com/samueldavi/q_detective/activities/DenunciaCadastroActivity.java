@@ -107,12 +107,15 @@ public class DenunciaCadastroActivity extends AppCompatActivity implements Locat
         photoFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                getPermissions();
                 startImageCapture();
+
             }
         });
         videoFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                getPermissions();
                 startVideoRecorder();
             }
         });
@@ -120,7 +123,7 @@ public class DenunciaCadastroActivity extends AppCompatActivity implements Locat
         /*fabMenu.setOnMenuButtonClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getPermissions();
+
             }
         });*/
     }
