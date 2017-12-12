@@ -1,6 +1,7 @@
 package com.samueldavi.q_detective.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
@@ -9,16 +10,18 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.samueldavi.q_detective.DenunciaListViewAdapter;
 import com.samueldavi.q_detective.R;
+import com.samueldavi.q_detective.fragments.MenuAlertDialog;
 import com.samueldavi.q_detective.model.DAO.DenunciaDAO;
 import com.samueldavi.q_detective.model.Denuncia;
 
 import java.util.List;
 
-public class DenunciaActivity extends AppCompatActivity {
+public class DenunciaActivity extends AppCompatActivity implements MenuAlertDialog.DialogListener, AdapterView.OnItemClickListener {
 
     private ListView denunciasListview;
     private DenunciaDAO denunciasDatabase;
@@ -48,6 +51,9 @@ public class DenunciaActivity extends AppCompatActivity {
 
         denunciasListview.setAdapter(adapter);
 
+        //abre o menu de contexto ao clicar em uma denuncia
+        denunciasListview.setOnItemClickListener(this);
+
         manageFloatingButton();
     }
 
@@ -75,5 +81,35 @@ public class DenunciaActivity extends AppCompatActivity {
 
     private void getDenunciasFromDatabase(){
         denuncias = denunciasDatabase.listar();
+    }
+
+
+
+    @Override
+    public void onDialogDetalhesClick(int position) {
+        Intent intent = new Intent(this, DetalhesActivity.class);
+        startActivity(intent);
+
+    }
+
+    @Override
+    public void onDialogEditarClick(int position) {
+
+    }
+
+    @Override
+    public void ondDialogRemoverClick(int position) {
+
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+        MenuAlertDialog fragmentDialog = new MenuAlertDialog();
+
+        Bundle bundle = new Bundle();
+        bundle.putInt("position", position);
+        fragmentDialog.setArguments(bundle);
+
+        fragmentDialog.show(this.getFragmentManager(), "menu");
     }
 }
