@@ -17,11 +17,13 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -58,8 +60,8 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
     private ProgressDialog load;
 
     private void setPreferences(Context context){
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-            isFirstTimeEver = preferences.getBoolean(getString(R.string.is_first_time_ever), true);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        isFirstTimeEver = preferences.getBoolean(getString(R.string.is_first_time_ever), true);
     }
 
 
@@ -155,6 +157,15 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
 
     private void getDenunciasFromDatabase(){
         denuncias = denunciasDatabase.listar();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == getResources().getInteger(R.integer.ACTIVITY_CADASTRO) && requestCode == RESULT_OK){
+            getDenunciasFromDatabase();
+            ((BaseAdapter)denunciasListview.getAdapter()).notifyDataSetChanged();
+        }
+
     }
 
 

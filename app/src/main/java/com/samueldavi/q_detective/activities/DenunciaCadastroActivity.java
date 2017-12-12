@@ -13,11 +13,14 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -35,12 +38,13 @@ import java.net.URI;
 import java.util.Calendar;
 import java.util.Date;
 
-public class DenunciaCadastroActivity extends AppCompatActivity implements LocationListener{
+public class DenunciaCadastroActivity extends AppCompatActivity{
 
     private EditText description;
     private Spinner category;
     private ImageView imgView;
     private VideoView videoView;
+    private ImageButton btnPlay;
     private FloatingActionButton videoFab;
     private FloatingActionButton photoFab;
     private FloatingActionMenu fabMenu;
@@ -48,7 +52,7 @@ public class DenunciaCadastroActivity extends AppCompatActivity implements Locat
     private boolean[] permissions = new boolean[3]; //0 is camera permission, 1 is permission to write on external storage, 2 is permission to read on external storage.
     private boolean hasSdCard;
     private LocationManager locationManager;
-    private Location location;
+    private Location currentLocation;
     private DenunciaDAO denunciaDatabase;
     private Denuncia editingDenuncia;
 
@@ -74,6 +78,7 @@ public class DenunciaCadastroActivity extends AppCompatActivity implements Locat
         photoFab = findViewById(R.id.fab_addPhoto_cadastro);
         fabMenu = findViewById(R.id.floating_menu_cadastro);
         imgView = findViewById(R.id.imageView_cadastro);
+        btnPlay = findViewById(R.id.btn_play);
     }
 
     private void setupView() {
@@ -108,6 +113,7 @@ public class DenunciaCadastroActivity extends AppCompatActivity implements Locat
             @Override
             public void onClick(View view) {
                 getPermissions();
+                getLocationManager();
                 startImageCapture();
 
             }
@@ -116,6 +122,7 @@ public class DenunciaCadastroActivity extends AppCompatActivity implements Locat
             @Override
             public void onClick(View view) {
                 getPermissions();
+                getLocationManager();
                 startVideoRecorder();
             }
         });
@@ -145,31 +152,35 @@ public class DenunciaCadastroActivity extends AppCompatActivity implements Locat
         }
     }
 
-    private void startVideoRecorder() {
-        try {
 
+    private void startVideoRecorder() {
+        if (permissions[0] && permissions[1] && permissions[2]) {
             Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
             intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
             intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 10);
             intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(setMediaFile(true)));
-
-            if (intent.resolveActivity(getPackageManager()) != null) {
-                startActivityForResult(intent, getResources().getInteger(R.integer.REQUEST_VIDEO_CAPTURE));
+            try {
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivityForResult(intent, getResources().getInteger(R.integer.REQUEST_VIDEO_CAPTURE));
+                }
+            } catch (Exception e) {
+                //Toast.makeText(this, "Erro ao iniciar a câmera.", Toast.LENGTH_LONG).show();
             }
-        } catch (Exception e) {
-            Toast.makeText(this, "Erro ao iniciar a câmera.", Toast.LENGTH_LONG).show();
         }
     }
 
+
     private void startImageCapture() {
-        try {
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(setMediaFile(false))); // isVideo parameter is false because we want an image.
-            if (intent.resolveActivity(getPackageManager()) != null) {
-                startActivityForResult(intent, getResources().getInteger(R.integer.REQUEST_IMAGE_CAPTURE));
+        if (permissions[0] && permissions[1] && permissions[2]) {
+            try {
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(setMediaFile(false))); // isVideo parameter is false because we want an image.
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivityForResult(intent, getResources().getInteger(R.integer.REQUEST_IMAGE_CAPTURE));
+                }
+            } catch (Exception e) {
+                //Toast.makeText(this, "Erro ao iniciar a câmera.", Toast.LENGTH_LONG).show();
             }
-        } catch (Exception e) {
-            Toast.makeText(this, "Erro ao iniciar a câmera.", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -183,47 +194,56 @@ public class DenunciaCadastroActivity extends AppCompatActivity implements Locat
         }
 
         File pathMidia = (isVideo) ? new File(diretorio + "/" + System.currentTimeMillis() + ".mp4") : new File(diretorio + "/" + System.currentTimeMillis() + ".jpg");
+        uri = Uri.fromFile(pathMidia);
         return pathMidia;
     }
+
 
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (requestCode == getResources().getInteger(R.integer.REQUEST_VIDEO_CAPTURE)&& resultCode == RESULT_OK) {
-            imgView.setVisibility(View.GONE);
 
-            uri = intent.getData();
+            imgView.setVisibility(View.GONE);
+            videoView.setVisibility(View.VISIBLE);
+            btnPlay.setVisibility(View.VISIBLE);
+
             videoView.setVideoURI(uri);
-            videoView.pause();
             videoView.seekTo(100);
             setFabMenuToFinish();
             //saveVideo(videoUri.getPath());
+
         }
 
         else if(requestCode == getResources().getInteger(R.integer.REQUEST_IMAGE_CAPTURE)&& resultCode == RESULT_OK){
-            uri = intent.getData();
+            // uri = intent.getData();
             videoView.setVisibility(View.GONE);
+            imgView.setVisibility(View.VISIBLE);
+            btnPlay.setVisibility(View.GONE);
             try {
-               Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(uri));
+                Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(uri));
                 imgView.setImageBitmap(bitmap);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
             setFabMenuToFinish();
+            if(imgView.getVisibility() ==  View.VISIBLE){
+                Log.d("IMGVIEW VISIBILITY: ", "asdalksd");
+            }
+
         }
     }
 
     private void setFabMenuToFinish(){
+        //fabMenu.close(liste);
         fabMenu.getMenuIconView().setImageResource(R.drawable.ic_checked);
         fabMenu.setOnMenuButtonClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getLocationManager();
-
                 String descricao = description.getText().toString();
                 Date data = Calendar.getInstance().getTime();
-                Double longitude = location.getLongitude();
-                Double latitude = location.getLatitude();
+                Double longitude = currentLocation.getLongitude();
+                Double latitude = currentLocation.getLatitude();
                 String uriMidia = uri.toString();
                 String usuario = getIntent().getStringExtra(getString(R.string.KEY_USER_EXTRA));
                 int categoria = category.getSelectedItemPosition();
@@ -246,33 +266,12 @@ public class DenunciaCadastroActivity extends AppCompatActivity implements Locat
                     getResources().getInteger(R.integer.REQUEST_PERMISSIONS));
             return;
         }
-
+        CustomLocationListener locationListener = new CustomLocationListener();
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         long minTime = 0;
         float minDistance = 0;
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, minTime, minDistance, this);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, this);
-    }
-
-
-    @Override
-    public void onLocationChanged(Location location) {
-        this.location = location;
-    }
-
-    @Override
-    public void onStatusChanged(String s, int i, Bundle bundle) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String s) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String s) {
-
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, minTime, minDistance, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, locationListener);
     }
 
 
@@ -284,7 +283,6 @@ public class DenunciaCadastroActivity extends AppCompatActivity implements Locat
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED &&
                         grantResults[1] == PackageManager.PERMISSION_GRANTED &&
                         grantResults[2] == PackageManager.PERMISSION_GRANTED) {
-                    getLocationManager();
                 } else {
                     Toast.makeText(this, "Sem permissão para uso de gps ou rede.", Toast.LENGTH_LONG).show();
                 }
@@ -292,4 +290,44 @@ public class DenunciaCadastroActivity extends AppCompatActivity implements Locat
             }
         }
     }
+
+    public void playVideo(View view) {
+        if(videoView.isPlaying()) {
+            btnPlay.setVisibility(View.VISIBLE);
+            videoView.pause();
+            videoView.seekTo(100);
+        }
+        else
+            videoView.start();
+            btnPlay.setVisibility(View.INVISIBLE);
+
+    }
+
+
+    private class CustomLocationListener implements LocationListener {
+
+        @Override
+        public void onLocationChanged(Location location) {
+            currentLocation = location;
+            Log.d("LOCATION", "Latitude: " + location.getLatitude() + "     Longitude: " + location.getLongitude());
+
+            /*String latitudeStr = String.valueOf(location.getLatitude());
+            String longitudeStr = String.valueOf(location.getLongitude());
+
+            provedor.setText(location.getProvider());
+            latitude.setText(latitudeStr);
+            longitude.setText(longitudeStr);
+
+            String url = String.format(urlBase, latitudeStr, longitudeStr);
+            mWebView.loadUrl(url);*/
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {    }
+        @Override
+        public void onProviderEnabled(String provider) {  }
+        @Override
+        public void onProviderDisabled(String provider) { }
+    }
+
 }
