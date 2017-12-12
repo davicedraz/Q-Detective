@@ -116,7 +116,7 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
 
     private void getUserFromDatabase() {
         List<Usuario> users = userDatabase.listar();
-        int lastUser = users.size();
+        int lastUser = users.size()-1;
         user = users.get(lastUser);
     }
 

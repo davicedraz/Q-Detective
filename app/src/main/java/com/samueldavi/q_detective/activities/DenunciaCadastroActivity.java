@@ -45,7 +45,7 @@ public class DenunciaCadastroActivity extends AppCompatActivity implements Locat
     private FloatingActionButton photoFab;
     private FloatingActionMenu fabMenu;
     private Uri uri;
-    private boolean[] permissions; //0 is camera permission, 1 is permission to write on external storage, 2 is permission to read on external storage.
+    private boolean[] permissions = new boolean[3]; //0 is camera permission, 1 is permission to write on external storage, 2 is permission to read on external storage.
     private boolean hasSdCard;
     private LocationManager locationManager;
     private Location location;
@@ -117,12 +117,12 @@ public class DenunciaCadastroActivity extends AppCompatActivity implements Locat
             }
         });
 
-        fabMenu.setOnMenuButtonClickListener(new View.OnClickListener() {
+        /*fabMenu.setOnMenuButtonClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 getPermissions();
             }
-        });
+        });*/
     }
 
     private void getPermissions() {
