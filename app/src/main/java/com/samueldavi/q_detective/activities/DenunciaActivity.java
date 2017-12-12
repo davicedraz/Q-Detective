@@ -10,16 +10,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.samueldavi.q_detective.adapter.DenunciaListViewAdapter;
 import com.samueldavi.q_detective.R;
 import com.samueldavi.q_detective.fragments.ConfirmAlertDialog;
 import com.samueldavi.q_detective.fragments.MenuAlertDialog;
 import com.samueldavi.q_detective.model.DAO.DenunciaDAO;
+import com.samueldavi.q_detective.model.DAO.UsuarioDAO;
 import com.samueldavi.q_detective.model.Denuncia;
+import com.samueldavi.q_detective.model.Usuario;
 
 import java.util.List;
 
@@ -30,45 +36,86 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
     private DenunciaDAO denunciasDatabase;
     private List<Denuncia> denuncias;
     private boolean isFirstTimeEver;
+    private TextView noItensTextTop;
+    private TextView noItensTextBottom;
+    private ImageView noItensImage;
+    private UsuarioDAO userDatabase;
+    private Usuario user;
 
     private void setPreferences(Context context){
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
             isFirstTimeEver = preferences.getBoolean(getString(R.string.is_first_time_ever), true);
     }
 
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_denuncias_activity, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.request_list) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_denuncia);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+
+        userDatabase = new UsuarioDAO(this);
+        denunciasDatabase = new DenunciaDAO(this);
 
         setPreferences(this);
-
-        denunciasDatabase = new DenunciaDAO(this);
-        setupDenucias();
+        getUserFromDatabase();
         getDenunciasFromDatabase();
+        setupDenucias();
 
         denunciasListview = (ListView) findViewById(R.id.listview_denuncias);
         DenunciaListViewAdapter adapter = new DenunciaListViewAdapter(denuncias, (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE));
 
         denunciasListview.setAdapter(adapter);
 
-        //abre o menu de contexto ao clicar em uma denuncia
+        //abre o menu_denuncias_activity de contexto ao clicar em uma denuncia
         denunciasListview.setOnItemClickListener(this);
 
         manageFloatingButton();
     }
 
+    private void getUserFromDatabase() {
+        List<Usuario> users = userDatabase.listar();
+        int lastUser = users.size();
+        user = users.get(lastUser);
+    }
+
     private void setupDenucias() {
-        getDenunciasFromDatabase();
 
         if (denuncias.isEmpty()){
             if(isFirstTimeEver){
-                //denunciasListview.setEmptyView(findViewById(R.id.txt_first_time_empty_listview));
+                noItensTextTop.setVisibility(View.GONE);
+                noItensTextBottom.setBackground(null);
+                noItensTextBottom.setText(getString(R.string.no_item_first_time));
+                noItensImage.setImageResource(R.drawable.ic_warning);
+
             }else{
-                //denunciasListview.setEmptyView(findViewById(R.id.txt_first_time_empty_listview));
+                noItensImage.setImageResource(R.drawable.ic_detective);
+                noItensTextBottom.setText(R.string.no_item_bottom_text);
+                noItensTextBottom.setBackground(getResources().getDrawable(R.drawable.no_item_text_bottom_background));//denunciasListview.setEmptyView(findViewById(R.id.txt_first_time_empty_listview));
             }
+        }else {
+            noItensTextTop.setVisibility(View.GONE);
+            noItensTextBottom.setVisibility(View.GONE);
+            noItensImage.setVisibility(View.GONE);
         }
     }
 
@@ -77,7 +124,9 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Click action
+                Intent intent = new Intent(DenunciaActivity.this, DenunciaCadastroActivity.class);
+                intent.putExtra(getString(R.string.KEY_USER_EXTRA), user.getNome());
+                startActivityForResult(intent, 1);
             }
         });
     }
@@ -85,6 +134,18 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
     private void getDenunciasFromDatabase(){
         denuncias = denunciasDatabase.listar();
     }
+
+
+
+
+
+
+
+
+
+
+    //DIALOG SHIT
+
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {

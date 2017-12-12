@@ -53,6 +53,21 @@ public class UsuarioDAO {
         return usuarios;
     }
 
+    public List<Usuario> listar() {
+        db = helper.getReadableDatabase();
+        cursor = db.query(DatabaseHelper.UsuarioDB.TABELA,
+                DatabaseHelper.UsuarioDB.COLUNAS_USUARIODB,
+                null, null, null, null, null);
+
+        List<Usuario> usuarios = new ArrayList<>();
+
+        while (cursor.moveToNext()) {
+            usuarios.add(this.criarUsuario(cursor));
+        }
+        cursor.close();
+        return usuarios;
+    }
+
 
     public long inserirUsuario(Usuario usuario) {
         ContentValues values = new ContentValues();
