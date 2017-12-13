@@ -10,7 +10,9 @@ import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
@@ -29,6 +31,9 @@ import android.widget.VideoView;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.samueldavi.q_detective.R;
 import com.samueldavi.q_detective.model.DAO.DenunciaDAO;
 import com.samueldavi.q_detective.model.Denuncia;
@@ -56,7 +61,8 @@ public class DenunciaCadastroActivity extends AppCompatActivity{
     private Location currentLocation;
     private DenunciaDAO denunciaDatabase;
     private Denuncia editingDenuncia;
-
+    //private FusedLocationProviderClient mFusedLocationClient;
+    private CustomLocationListener locationListener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +70,7 @@ public class DenunciaCadastroActivity extends AppCompatActivity{
 
         denunciaDatabase = new DenunciaDAO(this);
         editingDenuncia = (Denuncia) getIntent().getSerializableExtra(getString(R.string.KEY_EDIT));
+        //mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         findViews();
         setupView();
 
@@ -80,6 +87,9 @@ public class DenunciaCadastroActivity extends AppCompatActivity{
         fabMenu = findViewById(R.id.floating_menu_cadastro);
         imgView = findViewById(R.id.imageView_cadastro);
         btnPlay = findViewById(R.id.btn_play);
+
+        videoFab.setImageDrawable(getResources().getDrawable(R.drawable.ic_add_video));
+        photoFab.setImageDrawable(getResources().getDrawable(R.drawable.ic_image_add));
     }
 
     private void setupView() {
@@ -95,6 +105,7 @@ public class DenunciaCadastroActivity extends AppCompatActivity{
                 imgView.setVisibility(View.GONE);
                 videoView.setVisibility(View.VISIBLE);
                 videoView.setVideoPath(mediaPath);
+
             }else{
                 videoView.setVisibility(View.GONE);
                 imgView.setVisibility(View.VISIBLE);
@@ -157,19 +168,18 @@ public class DenunciaCadastroActivity extends AppCompatActivity{
         Log.d("getPermissions: ", "SAIU");
     }
 
-
     private void startVideoRecorder() {
         if (permissions[0] && permissions[1] && permissions[2]) {
             Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
             intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
             intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 10);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(setMediaFile(true)));
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, setMediaFile(true));
             try {
                 if (intent.resolveActivity(getPackageManager()) != null) {
                     startActivityForResult(intent, getResources().getInteger(R.integer.REQUEST_VIDEO_CAPTURE));
                 }
             } catch (Exception e) {
-                //Toast.makeText(this, "Erro ao iniciar a câmera.", Toast.LENGTH_LONG).show();
+                e.printStackTrace();//Log.d("getPermissions: ", "Erro Camera");//Toast.makeText(this, "Erro ao iniciar a câmera.", Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -179,18 +189,18 @@ public class DenunciaCadastroActivity extends AppCompatActivity{
         if (permissions[0] && permissions[1] && permissions[2]) {
             try {
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(setMediaFile(false))); // isVideo parameter is false because we want an image.
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, setMediaFile(false)); // isVideo parameter is false because we want an image.
                 if (intent.resolveActivity(getPackageManager()) != null) {
                     startActivityForResult(intent, getResources().getInteger(R.integer.REQUEST_IMAGE_CAPTURE));
                 }
             } catch (Exception e) {
-                Log.d("getPermissions: ", "Erro Camera"); //Toast.makeText(this, "Erro ao iniciar a câmera.", Toast.LENGTH_LONG).show();
+                e.printStackTrace();//Log.d("getPermissions: ", "Erro Camera"); //Toast.makeText(this, "Erro ao iniciar a câmera.", Toast.LENGTH_LONG).show();
             }
         }
     }
 
 
-    private File setMediaFile(boolean isVideo) {
+    private Uri setMediaFile(boolean isVideo) {
         File diretorio;
         if (!hasSdCard) {
             diretorio = (isVideo) ? this.getExternalFilesDir(Environment.DIRECTORY_MOVIES) : this.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
@@ -199,14 +209,18 @@ public class DenunciaCadastroActivity extends AppCompatActivity{
         }
 
         File pathMidia = (isVideo) ? new File(diretorio + "/" + System.currentTimeMillis() + ".mp4") : new File(diretorio + "/" + System.currentTimeMillis() + ".jpg");
-        if (android.os.Build.VERSION.SDK_INT >= 23) {
+
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            Log.d("BUILD VERSIO", "MAIOR QUE 6.0");
             String authority = this.getApplicationContext().getPackageName() + ".fileprovider";
             uri = FileProvider.getUriForFile(this, authority, pathMidia);
+            return uri;
         } else {
             uri = Uri.fromFile(pathMidia);
+            return uri;
         }
 
-        return pathMidia;
+        // return Uri.fromFile(pathMidia);
     }
 
 
@@ -253,8 +267,15 @@ public class DenunciaCadastroActivity extends AppCompatActivity{
             public void onClick(View view) {
                 String descricao = description.getText().toString();
                 Date data = Calendar.getInstance().getTime();
-                Double longitude = currentLocation.getLongitude();
-                Double latitude = currentLocation.getLatitude();
+                Double longitude;
+                Double latitude;
+                if(currentLocation != null) {
+                    longitude = currentLocation.getLongitude();
+                    latitude = currentLocation.getLatitude();
+                }else{
+                    longitude = 00.0000000;
+                    latitude = 00.000000;
+                }
                 String uriMidia = uri.toString();
                 String usuario = getIntent().getStringExtra(getString(R.string.KEY_USER_EXTRA));
                 int categoria = category.getSelectedItemPosition();
@@ -292,17 +313,38 @@ public class DenunciaCadastroActivity extends AppCompatActivity{
                             Manifest.permission.ACCESS_COARSE_LOCATION,
                             Manifest.permission.INTERNET},
                     getResources().getInteger(R.integer.REQUEST_PERMISSIONS));
+            Log.d("GETLOCATION: ", "SEM PERMISSÂO");
             return;
         }
-        CustomLocationListener locationListener = new CustomLocationListener();
-        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        locationListener = new CustomLocationListener();
+        locationManager = (LocationManager) DenunciaCadastroActivity.this.getSystemService(Context.LOCATION_SERVICE);
         long minTime = 0;
         float minDistance = 0;
+
+
+/*        mFusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        Log.d("getLastLocation: ", " Entrou");
+                        if (location != null) {
+                            currentLocation = location;
+                            Log.d("getLastLocation: ", " "+ location.getLongitude());
+                        }
+                    }
+                });*/
+
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, minTime, minDistance, locationListener);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3600000, 1000, locationListener);
+
+
+
 
         Log.d("getPermissions: ", "SAIU");
     }
+
 
 
     @Override
@@ -328,12 +370,25 @@ public class DenunciaCadastroActivity extends AppCompatActivity{
     public void playVideo(View view) {
         if(videoView.isPlaying()) {
             btnPlay.setVisibility(View.VISIBLE);
+            btnPlay.setImageAlpha(180);
             videoView.pause();
             videoView.seekTo(100);
         }
-        else
+        else {
             videoView.start();
-            btnPlay.setVisibility(View.INVISIBLE);
+            btnPlay.setImageAlpha(0);
+
+            videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                public void onCompletion(MediaPlayer mp) {
+                    btnPlay.setImageAlpha(180);
+                    videoView.seekTo(100);
+                }
+            });
+
+        }
+
+
+        //btnPlay.setVisibility(View.INVISIBLE);
 
     }
 
@@ -344,6 +399,8 @@ public class DenunciaCadastroActivity extends AppCompatActivity{
         public void onLocationChanged(Location location) {
             currentLocation = location;
             Log.d("LOCATION", "Latitude: " + location.getLatitude() + "     Longitude: " + location.getLongitude());
+            locationManager.removeUpdates(locationListener);
+
 
             /*String latitudeStr = String.valueOf(location.getLatitude());
             String longitudeStr = String.valueOf(location.getLongitude());

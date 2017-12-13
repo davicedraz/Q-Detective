@@ -3,6 +3,7 @@ package com.samueldavi.q_detective.activities;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -136,12 +137,24 @@ public class DetalhesActivity extends AppCompatActivity {
     public void playVideo(View view) {
         if(videoViewMidia.isPlaying()) {
             btn_playMidia.setVisibility(View.VISIBLE);
+            btn_playMidia.setImageAlpha(180);
             videoViewMidia.pause();
             videoViewMidia.seekTo(100);
         }
-        else
+        else{
             videoViewMidia.start();
-        btn_playMidia.setVisibility(View.INVISIBLE);
+
+            btn_playMidia.setImageAlpha(0);
+
+            videoViewMidia.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                public void onCompletion(MediaPlayer mp) {
+                    btn_playMidia.setImageAlpha(180);
+                    videoViewMidia.seekTo(100);
+                }
+            });
+        }
+
+        //btn_playMidia.setVisibility(View.INVISIBLE);
     }
 
 

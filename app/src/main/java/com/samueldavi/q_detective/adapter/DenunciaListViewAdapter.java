@@ -1,5 +1,6 @@
 package com.samueldavi.q_detective.adapter;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,10 +20,12 @@ import java.util.List;
 public class DenunciaListViewAdapter extends BaseAdapter {
     private List<Denuncia> denuncias;
     private LayoutInflater inflater;
+    private Context context;
 
-    public DenunciaListViewAdapter(List<Denuncia> denuncias, LayoutInflater inflater) {
+    public DenunciaListViewAdapter(List<Denuncia> denuncias, Context context) {
         this.denuncias = denuncias;
-        this.inflater = inflater;
+        this.context = context;
+        this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
 
@@ -41,6 +44,12 @@ public class DenunciaListViewAdapter extends BaseAdapter {
         return denuncias.get(i).getId();
     }
 
+    public void updateDenunciasList(List<Denuncia> newlist) {
+        denuncias.clear();
+        denuncias.addAll(newlist);
+        this.notifyDataSetChanged();
+    }
+
     @Override
     public View getView(int i, View convertView, ViewGroup parent) {
         convertView = (convertView != null) ? convertView : inflater.inflate(R.layout.listview_item_denuncia, null);
@@ -54,15 +63,16 @@ public class DenunciaListViewAdapter extends BaseAdapter {
 
         switch (denuncias.get(i).getCategoria()){
             case 0:
-                //catAndDate.setCompoundDrawablePadding(R.drawable.ic_);
+                catAndDate.setCompoundDrawablesWithIntrinsicBounds(null, context.getResources().getDrawable(R.drawable.ic_road) , null, null);
+                //catAndDate.setCompoundDrawablePadding(R.drawable.ic_road);
                 break;
 
             case 1:
-                //catAndDate.setCompoundDrawablePadding(R.drawable.ic_);
+                catAndDate.setCompoundDrawablesWithIntrinsicBounds(null, context.getResources().getDrawable(R.drawable.ic_park) , null, null);
                 break;
 
             case 2:
-                //catAndDate.setCompoundDrawablePadding(R.drawable.ic_);
+                catAndDate.setCompoundDrawablesWithIntrinsicBounds(null, context.getResources().getDrawable(R.drawable.ic_sewer) , null, null);
                 break;
         }
 

@@ -17,52 +17,77 @@
         android:layout_height="200dp"
         android:src="@drawable/default_image"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Nome:"
-        android:textSize="15sp"
-        android:layout_marginTop="10dp"/>
+    <android.support.design.widget.TextInputLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
     <EditText
         android:id="@+id/editTextNome"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
+        android:hint="Nome"
         android:textColor="#414141"/>
 
-    <TextView
+</android.support.design.widget.TextInputLayout>
+
+   <!-- <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Nome:"
+        android:textSize="15sp"
+        android:layout_marginTop="10dp"/>-->
+
+
+
+   <!-- <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Email:"
-        android:textSize="15sp"/>
+        android:textSize="15sp"/>-->
 
-
-    <EditText
-        android:id="@+id/editTextEmail"
+    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textEmailAddress"
-        android:textColor="#414141"/>
+        android:layout_height="wrap_content">
 
+        <EditText
+            android:id="@+id/editTextEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"
+            android:hint="Email"
+            android:textColor="#414141"/>
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:id="@+id/editTextBairro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:textColor="#414141"
+            android:hint="Qual o seu bairro?"/>
+    </android.support.design.widget.TextInputLayout>
+
+<!--
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Em qual bairro de Quixadá você mora?"
-        android:textSize="15sp"/>
+        android:textSize="15sp"/>-->
 
-    <EditText
-        android:id="@+id/editTextBairro"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="text"
-        android:textColor="#414141"/>
+
 
     <Button
         android:id="@+id/buttonContinuar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
+        android:background="@color/colorFab"
+        android:textColor="@color/colorText_Bottom_empty_text"
         android:text="Continuar"/>
 
 

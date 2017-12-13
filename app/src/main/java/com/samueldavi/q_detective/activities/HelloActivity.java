@@ -28,6 +28,8 @@ public class HelloActivity extends AppCompatActivity {
 
         usuarioDAO = new UsuarioDAO(this);
 
+        if(usuarioDAO.listar().size() > 0)
+            redirect();
 //        if (usuarioDAO.listarUsuarios().size() > 0){
 //            redirect();
 //        }

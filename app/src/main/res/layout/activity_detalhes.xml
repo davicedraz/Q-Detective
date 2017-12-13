@@ -62,22 +62,29 @@
         android:visibility="gone"
         android:src="@drawable/default_image"/>
 
-    <VideoView
-        android:id="@+id/videoViewMidia"
-        android:layout_width="wrap_content"
-        android:layout_height="240dp"
-        android:layout_below="@id/textViewDescricao"
-        android:visibility="gone"/>
-
-    <ImageButton
-        android:id="@+id/btn_playMidia"
-        android:layout_width="wrap_content"
+    <FrameLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:src="@drawable/ic_play_button"
-        android:background="@android:color/transparent"
-        android:onClick="playVideo"
-        android:visibility="gone"/>
+        android:layout_below="@id/textViewDescricao"
+        >
+        <VideoView
+            android:id="@+id/videoViewMidia"
+            android:layout_width="match_parent"
+            android:layout_gravity="center"
+            android:layout_height="240dp"
+            />
+
+        <ImageButton
+            android:id="@+id/btn_playMidia"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_play_button"
+            android:background="@android:color/transparent"
+            android:onClick="playVideo"
+            />
+    </FrameLayout>
+
 
     <WebView
         android:id="@+id/webViewLocalizacao"

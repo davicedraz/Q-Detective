@@ -39,7 +39,7 @@
         android:layout_below="@+id/img_empty_denuncia_activity"
         android:text="@string/no_item_bottom_text"
         android:textSize="18sp"
-        android:textColor="#FEFEFE"
+        android:textColor="@color/colorText_Bottom_empty_text"
         android:background="@drawable/no_item_text_bottom_background"
         />
 
@@ -50,13 +50,15 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_margin="@dimen/fab_margin"
+        android:backgroundTint="@color/colorFab"
         android:src="@drawable/fab_add" />
 
 
         <ListView
             android:id="@+id/listview_denuncias"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:paddingTop="@dimen/default_padding">
 
         </ListView>
 
