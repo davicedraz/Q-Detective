@@ -64,7 +64,6 @@
         </ListView>
 
     </ScrollView>
-
-   <!-- <include layout="@layout/activity_denuncia_content" />-->
+    <!--<include layout="@layout/activity_denuncia_content" />-->
 
 </RelativeLayout>
