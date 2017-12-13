@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.ImageButton;
@@ -19,6 +20,7 @@ import com.samueldavi.q_detective.model.Denuncia;
 
 import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class DetalhesActivity extends AppCompatActivity {
@@ -100,24 +102,23 @@ public class DetalhesActivity extends AppCompatActivity {
         textViewDescricao.setText(denuncia.getDescricao());
 
         //localizacao da denuncia
-        String url = String.format(urlBase, denuncia.getLongitude(), denuncia.getLatitude());
+        String url = String.format(urlBase, denuncia.getLatitude(), denuncia.getLongitude());
         webViewLocalizacao.loadUrl(url);
 
-        setupMidia();
+         setupMidia();
     }
 
     public void setupMidia(){
         Uri uri = Uri.parse(denuncia.getUriMidia());
-        String path = uri.getPath();
+        String path = uri.toString();
 
-        String[] parts = path.split(".");
-        String midiaFormat = parts[1];
+        String midiaFormat = path.substring(path.length() - 3, path.length());
 
         if(midiaFormat.equals("mp4")){
             videoViewMidia.setVisibility(View.VISIBLE);
             videoViewMidia.setVideoPath(path);
         }
-        else if(midiaFormat.equals("jpeg")){
+        else if(midiaFormat.equals("jpg")){
             imageViewMidia.setVisibility(View.VISIBLE);
 
             Bitmap bitmap = null;

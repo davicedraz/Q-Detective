@@ -165,11 +165,11 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
             getDenunciasFromDatabase();
             ((BaseAdapter)denunciasListview.getAdapter()).notifyDataSetChanged();
             Log.d("PIRU", denuncias.get(denuncias.size() - 1).getDescricao());
+
         }
         else{
             Log.d(" ", "deu erro");
         }
-
     }
 
     @Override
@@ -179,6 +179,7 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
         ((BaseAdapter) denunciasListview.getAdapter()).notifyDataSetChanged();
         setupDenucias();
         Log.d("PIRU", denuncias.size() + "");
+//        Log.d("PIRU2", denuncias.get(denuncias.size() - 1).getUriMidia());
 
         super.onResume();
     }
