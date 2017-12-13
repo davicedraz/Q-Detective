@@ -37,6 +37,7 @@
         android:paddingStart="@dimen/default_padding"
         android:paddingEnd="@dimen/default_padding"
         android:layout_centerHorizontal="true"
+        android:gravity="center"
         android:layout_below="@+id/img_empty_denuncia_activity"
         android:text="@string/no_item_bottom_text"
         android:textSize="18sp"

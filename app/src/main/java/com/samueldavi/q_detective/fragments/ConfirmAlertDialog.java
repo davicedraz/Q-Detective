@@ -19,13 +19,13 @@ public class ConfirmAlertDialog extends DialogFragment {
         public void onDialogCancelarClick(DialogFragment dialog);
     }
 
-
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage("Deseja mesmo remover essa denúncia?");
         builder.setPositiveButton("Sim", confirmaSim);
         builder.setNegativeButton("Cancelar", confirmaCancelar);
+
         listener = (DialogConfirmListener) getActivity();
 
         return builder.create();

@@ -224,6 +224,18 @@ public class DenunciaCadastroActivity extends AppCompatActivity{
         // return Uri.fromFile(pathMidia);
     }
 
+    private File getFileByUri(String path) {
+
+        if (path.contains("/")) {
+            System.out.println(path);
+            int beginIndex = path.lastIndexOf("/") + 1;
+            path = path.substring(beginIndex);
+            System.out.println(path);
+        }
+        File diretorio = this.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        return new File(diretorio, path);
+    }
+
 
 
     @Override

@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -90,12 +91,7 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
         switch (id){
             case R.id.request_list:
                 Log.d("ItemSelected", "request_list");
-                getPermissaoDaInternet();
-                if (permisaoInternet) {
-                    DownloadDenuncias downloadDenuncias = new DownloadDenuncias();
-                    downloadDenuncias.execute();
-                }
-
+               iniciarDownload();
             break;
 
             case R.id.user_settings:
@@ -249,7 +245,7 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
             UploadDenuncia upload = new UploadDenuncia();
             upload.execute(denuncia);
 
-//            denunciasDatabase.removerDenuncia(denuncia.getId());
+            denunciasDatabase.removerDenuncia(denuncia.getId());
             updateListview();
         }
     }
@@ -313,6 +309,20 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
                             Manifest.permission.ACCESS_NETWORK_STATE},
                     1);
         }
+
+    }
+
+
+    private File getFileByUri(String path) {
+
+        if (path.contains("/")) {
+            System.out.println(path);
+            int beginIndex = path.lastIndexOf("/") + 1;
+            path = path.substring(beginIndex);
+            System.out.println(path);
+        }
+        File diretorio = this.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        return new File(diretorio, path);
     }
 
     class UploadDenuncia extends AsyncTask<Denuncia, Void, WebServiceUtils> {
@@ -329,7 +339,10 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
             String urlDados = url + "rest/denuncias";
             if (webService.sendDenunciaJson(urlDados, denuncia)) {
                 urlDados = url + "rest/arquivos";
-                webService.uploadImagemBase64(urlDados, new File(Uri.parse(denuncia.getUriMidia()).getPath()));
+
+                File file = getFileByUri(denuncia.getUriMidia());
+                System.out.println(file.getPath());
+                webService.uploadImagemBase64(urlDados, file);
             }
             return webService;
         }
@@ -355,7 +368,7 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
             String id = (ids != null && ids.length == 1) ? ids[0].toString() : "";
             List<Denuncia> denuncias = webService.getListaDenunciasJson(url, "rest/denuncias", id);
             for (Denuncia denuncia : denuncias) {
-                String path = getDiretorioDeSalvamento(denuncia.getUriMidia()).getPath();
+                String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES).getPath() + "/" + denuncia.getUriMidia();
                 webService.downloadImagemBase64(url + "rest/arquivos", path, denuncia.getId());
                 denuncia.setUriMidia(path);
             }
@@ -364,12 +377,12 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
 
         @Override
         protected void onPostExecute(WebServiceUtils webService) {
-            for (Denuncia contato : webService.getDenuncias()) {
-                Denuncia denuncia = denunciasDatabase.buscarDenunciaPorID(contato.getId());
+            for (Denuncia denuncias : webService.getDenuncias()) {
+                Denuncia denuncia = denunciasDatabase.buscarDenunciaPorID(denuncias.getId());
                 if (denuncia != null) {
                     denunciasDatabase.atualizarDenuncia(denuncia);
                 } else {
-                    denunciasDatabase.salvarDenuncia(denuncia);
+                    denunciasDatabase.salvarDenuncia(denuncias);
                 }
             }
             load.dismiss();
@@ -387,7 +400,7 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
         return pathDaImagem;
     }
 
-    public void iniciarDownload(View view) {
+    public void iniciarDownload() {
         getPermissaoDaInternet();
         if (permisaoInternet) {
             DownloadDenuncias downloadDenuncias = new DownloadDenuncias();

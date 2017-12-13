@@ -125,6 +125,7 @@ public class WebServiceUtils {
             OutputStream fOut = new FileOutputStream(file);
             imagem.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
             fOut.close();
+
         } catch (Exception fne) {
             fne.printStackTrace();
             respostaServidor = "Erro ao realizar o download da imagem do servidor.";
@@ -174,6 +175,7 @@ public class WebServiceUtils {
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public boolean uploadImagemBase64(String url, File foto) {
+        System.out.println(foto.getPath());
         try {
             byte[] byteArray = loadFile(foto);
             String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
@@ -238,6 +240,7 @@ public class WebServiceUtils {
         while (offset < bytes.length && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
             offset += numRead;
         }
+        is.reset();
         is.close();
         return bytes;
     }
