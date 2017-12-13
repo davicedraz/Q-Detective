@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -26,6 +27,7 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,10 +39,12 @@ import com.samueldavi.q_detective.model.DAO.DenunciaDAO;
 import com.samueldavi.q_detective.model.DAO.UsuarioDAO;
 import com.samueldavi.q_detective.model.Denuncia;
 import com.samueldavi.q_detective.model.Usuario;
+import com.samueldavi.q_detective.resources.DatabaseHelper;
 import com.samueldavi.q_detective.resources.WebServiceUtils;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 public class DenunciaActivity extends AppCompatActivity implements MenuAlertDialog.DialogListener,
         AdapterView.OnItemClickListener, ConfirmAlertDialog.DialogConfirmListener {
@@ -55,8 +59,9 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
     private UsuarioDAO userDatabase;
     private Usuario user;
 
+    private List<Map<String, Object>> mapList;
     private boolean permisaoInternet = false;
-    private final String url = " http://35.226.50.35/QDetective/";
+    private final String url = "http://35.226.50.35/QDetective/";
     private ProgressDialog load;
 
     private void setPreferences(Context context){
@@ -164,22 +169,15 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
         if(requestCode == getResources().getInteger(R.integer.ACTIVITY_CADASTRO) && requestCode == RESULT_OK){
             getDenunciasFromDatabase();
             ((BaseAdapter)denunciasListview.getAdapter()).notifyDataSetChanged();
-            Log.d("PIRU", denuncias.get(denuncias.size() - 1).getDescricao());
 
-        }
-        else{
-            Log.d(" ", "deu erro");
         }
     }
 
     @Override
     protected void onResume() {
-
         getDenunciasFromDatabase();
         ((BaseAdapter) denunciasListview.getAdapter()).notifyDataSetChanged();
         setupDenucias();
-        Log.d("PIRU", denuncias.size() + "");
-//        Log.d("PIRU2", denuncias.get(denuncias.size() - 1).getUriMidia());
 
         super.onResume();
     }
@@ -213,6 +211,8 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
             Denuncia denuncia = denuncias.get(position);
             UploadDenuncia upload = new UploadDenuncia();
             upload.execute(denuncia);
+
+            denunciasDatabase.removerDenuncia(denuncia.getId());
         }
     }
 
@@ -223,7 +223,6 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
         intent.putExtra(getString(R.string.KEY_EDIT), denuncias.get(position));
         startActivityForResult(intent, getResources().getInteger(R.integer.ACTIVITY_CADASTRO_EDIT));
     }
-
 
     @Override
     public void ondDialogRemoverClick(int position) {
@@ -241,8 +240,6 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
         int position = dialog.getArguments().getInt("position");
         denunciasDatabase.removerDenuncia(denunciasDatabase.listar().get(position).getId());
 
-
-        //não sei fazer aquele negocio lá pra voltar pra activity depois de excluir kkkkk
         finish();
         startActivity(this.getIntent());
     }
@@ -252,6 +249,8 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
         //do nothing
     }
 
+
+    // WEBSERVICE SHIT
 
     public boolean isOnline() {
         ConnectivityManager cm =
@@ -306,5 +305,58 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
             load.dismiss();
         }
     }
+
+    private class DownloadDenuncias extends AsyncTask<Long, Void, WebServiceUtils> {
+        @Override
+        protected void onPreExecute() {
+            load = ProgressDialog.show(DenunciaActivity.this, "Por favor Aguarde ...", "Recuperando Informações do Servidor...");
+        }
+
+        @Override
+        protected WebServiceUtils doInBackground(Long... ids) {
+            WebServiceUtils webService = new WebServiceUtils();
+            String id = (ids != null && ids.length == 1) ? ids[0].toString() : "";
+            List<Denuncia> denuncias = webService.getListaDenunciasJson(url, "denuncias", id);
+            for (Denuncia denuncia : denuncias) {
+                String path = getDiretorioDeSalvamento(denuncia.getUriMidia()).getPath();
+                webService.downloadImagemBase64(url + "arquivos", path, denuncia.getId());
+                denuncia.setUriMidia(path);
+            }
+            return webService;
+        }
+
+        @Override
+        protected void onPostExecute(WebServiceUtils webService) {
+            for (Denuncia contato : webService.getDenuncias()) {
+                Denuncia denuncia = denunciasDatabase.buscarDenunciaPorID(contato.getId());
+                if (denuncia != null) {
+                    denunciasDatabase.atualizarDenuncia(denuncia);
+                } else {
+                    denunciasDatabase.salvarDenuncia(denuncia);
+                }
+            }
+            load.dismiss();
+            Toast.makeText(getApplicationContext(), webService.getRespostaServidor(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private File getDiretorioDeSalvamento(String nomeArquivo) {
+        if (nomeArquivo.contains("/")) {
+            int beginIndex = nomeArquivo.lastIndexOf("/") + 1;
+            nomeArquivo = nomeArquivo.substring(beginIndex);
+        }
+        File diretorio = this.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File pathDaImagem = new File(diretorio, nomeArquivo);
+        return pathDaImagem;
+    }
+
+    public void iniciarDownload(View view) {
+        getPermissaoDaInternet();
+        if (permisaoInternet) {
+            DownloadDenuncias downloadDenuncias = new DownloadDenuncias();
+            downloadDenuncias.execute();
+        }
+    }
+
 
 }
