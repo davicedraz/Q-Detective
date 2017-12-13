@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.WebView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.VideoView;
@@ -30,6 +31,7 @@ public class DetalhesActivity extends AppCompatActivity {
 
     private ImageView imageViewMidia;
     private VideoView videoViewMidia;
+    private ImageButton btn_playMidia;
 
     private WebView webViewLocalizacao;
 
@@ -53,6 +55,7 @@ public class DetalhesActivity extends AppCompatActivity {
 
         imageViewMidia = (ImageView) findViewById(R.id.imageViewMidia);
         videoViewMidia = (VideoView) findViewById(R.id.videoViewMidia);
+        btn_playMidia = (ImageButton) findViewById(R.id.btn_playMidia);
 
         webViewLocalizacao = (WebView) findViewById(R.id.webViewLocalizacao);
 
@@ -113,7 +116,6 @@ public class DetalhesActivity extends AppCompatActivity {
         if(midiaFormat.equals("mp4")){
             videoViewMidia.setVisibility(View.VISIBLE);
             videoViewMidia.setVideoPath(path);
-//            TODO função de acionar a visualização do vídeo
         }
         else if(midiaFormat.equals("jpeg")){
             imageViewMidia.setVisibility(View.VISIBLE);
@@ -128,5 +130,19 @@ public class DetalhesActivity extends AppCompatActivity {
             imageViewMidia.setImageBitmap(bitmap);
         }
     }
+
+
+    public void playVideo(View view) {
+        if(videoViewMidia.isPlaying()) {
+            btn_playMidia.setVisibility(View.VISIBLE);
+            videoViewMidia.pause();
+            videoViewMidia.seekTo(100);
+        }
+        else
+            videoViewMidia.start();
+        btn_playMidia.setVisibility(View.INVISIBLE);
+
+    }
+
 
 }

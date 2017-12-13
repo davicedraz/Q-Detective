@@ -1,6 +1,7 @@
 package com.samueldavi.q_detective.activities;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -252,6 +253,10 @@ public class DenunciaCadastroActivity extends AppCompatActivity{
                 Denuncia denuncia = new Denuncia(descricao, data, longitude, latitude, uriMidia, usuario, categoria);
                 denunciaDatabase.salvarDenuncia(denuncia);
 
+                Intent intent = new Intent();
+                setResult(RESULT_OK, intent);
+
+//                finishActivity(RESULT_OK);
                 finish();
             }
         });

@@ -161,16 +161,27 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(" ", "entrou no metodo");
         if(requestCode == getResources().getInteger(R.integer.ACTIVITY_CADASTRO) && requestCode == RESULT_OK){
             getDenunciasFromDatabase();
             ((BaseAdapter)denunciasListview.getAdapter()).notifyDataSetChanged();
+            Log.d("PIRU", denuncias.get(denuncias.size() - 1).getDescricao());
+        }
+        else{
+            Log.d(" ", "deu erro");
         }
 
     }
 
+    @Override
+    protected void onResume() {
+        getDenunciasFromDatabase();
+        ((BaseAdapter) denunciasListview.getAdapter()).notifyDataSetChanged();
+        Log.d("PIRU", denuncias.size() + "");
+        super.onResume();
+    }
 
     //DIALOG SHIT
-
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {

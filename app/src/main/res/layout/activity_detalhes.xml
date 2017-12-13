@@ -69,6 +69,16 @@
         android:layout_below="@id/textViewDescricao"
         android:visibility="gone"/>
 
+    <ImageButton
+        android:id="@+id/btn_playMidia"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_play_button"
+        android:background="@android:color/transparent"
+        android:onClick="playVideo"
+        android:visibility="gone"/>
+
     <WebView
         android:id="@+id/webViewLocalizacao"
         android:layout_width="match_parent"
