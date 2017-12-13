@@ -87,8 +87,11 @@ public class DenunciaCadastroActivity extends AppCompatActivity{
             description.setText(editingDenuncia.getDescricao());
             category.setSelection(editingDenuncia.getCategoria());
 
-            String mediaPath = Uri.parse(editingDenuncia.getUriMidia()).getPath();
-            if(mediaPath.split(".")[1].equals("mp4")){
+            String mediaPath = Uri.parse(editingDenuncia.getUriMidia()).toString();
+
+            String midiaFormat = mediaPath.substring(mediaPath.length() - 3, mediaPath.length());
+
+            if(midiaFormat.equals("mp4")){
                 imgView.setVisibility(View.GONE);
                 videoView.setVisibility(View.VISIBLE);
                 videoView.setVideoPath(mediaPath);
