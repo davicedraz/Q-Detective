@@ -66,6 +66,6 @@ public class DenunciaListViewAdapter extends BaseAdapter {
                 break;
         }
 
-        return null;
+        return convertView;
     }
 }

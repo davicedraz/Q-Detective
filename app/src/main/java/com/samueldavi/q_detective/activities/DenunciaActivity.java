@@ -123,7 +123,6 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
     }
 
     private void setupDenucias() {
-
         if (denuncias.isEmpty()){
             if(isFirstTimeEver){
                 noItensTextTop.setVisibility(View.GONE);
@@ -175,9 +174,12 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
 
     @Override
     protected void onResume() {
+
         getDenunciasFromDatabase();
         ((BaseAdapter) denunciasListview.getAdapter()).notifyDataSetChanged();
+        setupDenucias();
         Log.d("PIRU", denuncias.size() + "");
+
         super.onResume();
     }
 
