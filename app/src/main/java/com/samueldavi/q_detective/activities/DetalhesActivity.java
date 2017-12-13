@@ -142,7 +142,6 @@ public class DetalhesActivity extends AppCompatActivity {
         else
             videoViewMidia.start();
         btn_playMidia.setVisibility(View.INVISIBLE);
-
     }
 
 
