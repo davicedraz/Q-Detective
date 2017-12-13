@@ -261,7 +261,7 @@ public class DenunciaCadastroActivity extends AppCompatActivity{
 
     private void setFabMenuToFinish(){
         //fabMenu.close(liste);
-        fabMenu.getMenuIconView().setImageResource(R.drawable.ic_checked);
+        fabMenu.getMenuIconView().setImageResource(R.drawable.ic_checked_rotated);
         fabMenu.setOnMenuButtonClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
