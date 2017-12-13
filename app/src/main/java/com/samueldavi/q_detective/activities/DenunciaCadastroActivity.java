@@ -154,6 +154,7 @@ public class DenunciaCadastroActivity extends AppCompatActivity{
         if (!(permissions[0] && permissions[1] && permissions[2])) {
             ActivityCompat.requestPermissions(this, new String[]{CAMERA, WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE}, getResources().getInteger(R.integer.REQUEST_PERMISSIONS));
         }
+        Log.d("getPermissions: ", "SAIU");
     }
 
 
@@ -183,7 +184,7 @@ public class DenunciaCadastroActivity extends AppCompatActivity{
                     startActivityForResult(intent, getResources().getInteger(R.integer.REQUEST_IMAGE_CAPTURE));
                 }
             } catch (Exception e) {
-                //Toast.makeText(this, "Erro ao iniciar a câmera.", Toast.LENGTH_LONG).show();
+                Log.d("getPermissions: ", "Erro Camera"); //Toast.makeText(this, "Erro ao iniciar a câmera.", Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -198,7 +199,13 @@ public class DenunciaCadastroActivity extends AppCompatActivity{
         }
 
         File pathMidia = (isVideo) ? new File(diretorio + "/" + System.currentTimeMillis() + ".mp4") : new File(diretorio + "/" + System.currentTimeMillis() + ".jpg");
-        uri = Uri.fromFile(pathMidia);
+        if (android.os.Build.VERSION.SDK_INT >= 23) {
+            String authority = this.getApplicationContext().getPackageName() + ".fileprovider";
+            uri = FileProvider.getUriForFile(this, authority, pathMidia);
+        } else {
+            uri = Uri.fromFile(pathMidia);
+        }
+
         return pathMidia;
     }
 
@@ -253,14 +260,27 @@ public class DenunciaCadastroActivity extends AppCompatActivity{
                 int categoria = category.getSelectedItemPosition();
 
 
-                Denuncia denuncia = new Denuncia(descricao, data, longitude, latitude, uriMidia, usuario, categoria);
-                denunciaDatabase.salvarDenuncia(denuncia);
+
+                if(editingDenuncia == null) {
+                    Denuncia denuncia = new Denuncia(descricao, data, longitude, latitude, uriMidia, usuario, categoria);
+                    denunciaDatabase.salvarDenuncia(denuncia);
+                }else{
+                    editingDenuncia.setDescricao(descricao);
+                    editingDenuncia.setData(data);
+                    editingDenuncia.setLatitude(latitude);
+                    editingDenuncia.setLongitude(longitude);
+                    editingDenuncia.setUriMidia(uriMidia);
+                    editingDenuncia.setUsuario(usuario);
+                    editingDenuncia.setCategoria(categoria);
+                    denunciaDatabase.atualizarDenuncia(editingDenuncia);
+                }
+
 
                 Intent intent = new Intent();
                 setResult(RESULT_OK, intent);
-
-//                finishActivity(RESULT_OK);
                 finish();
+//                finishActivity(RESULT_OK);
+
             }
         });
     }
@@ -280,21 +300,27 @@ public class DenunciaCadastroActivity extends AppCompatActivity{
         float minDistance = 0;
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, minTime, minDistance, locationListener);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, locationListener);
+
+        Log.d("getPermissions: ", "SAIU");
     }
 
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case 1: {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[1] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[2] == PackageManager.PERMISSION_GRANTED) {
-                } else {
-                    Toast.makeText(this, "Sem permissão para uso de gps ou rede.", Toast.LENGTH_LONG).show();
+
+        Log.d("RESULTS_LENGTH:", " " + grantResults.length);
+        if(grantResults.length != 0) {
+            switch (requestCode) {
+                case 1: {
+                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                            grantResults[1] == PackageManager.PERMISSION_GRANTED &&
+                            grantResults[2] == PackageManager.PERMISSION_GRANTED) {
+                    } else {
+                        Toast.makeText(this, "Sem permissão para uso de gps ou rede.", Toast.LENGTH_LONG).show();
+                    }
+                    return;
                 }
-                return;
             }
         }
     }

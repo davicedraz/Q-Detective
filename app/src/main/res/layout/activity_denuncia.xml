@@ -52,18 +52,14 @@
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/fab_add" />
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
         <ListView
             android:id="@+id/listview_denuncias"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
         </ListView>
 
-    </ScrollView>
     <!--<include layout="@layout/activity_denuncia_content" />-->
 
 </RelativeLayout>
