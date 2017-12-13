@@ -81,15 +81,18 @@ public class DetalhesActivity extends AppCompatActivity {
 
     public void preencherCampos(){
         //De acordo com o tipo da categoria
-        if (denuncia.getCategoria() == 0){
+        Log.d("DENUNCIA CATEGORIA", ""+denuncia.getCategoria().getInt(denuncia.getCategoria().getDescricao()));
+        Log.d("DENUNCIA CATEGORIA", "Descrição"+denuncia.getDescricao());
+
+        if (denuncia.getCategoria().getInt(denuncia.getCategoria().getDescricao()) == 0){
             iconeCategoria.setImageResource(R.drawable.ic_road);
             textViewCategoria.setText("Vias públicas de acesso");
         }
-        else if(denuncia.getCategoria() == 1){
+        else if(denuncia.getCategoria().getInt(denuncia.getCategoria().getDescricao()) == 1){
             iconeCategoria.setImageResource(R.drawable.ic_park);
             textViewCategoria.setText("Equipamentos comunitários");
         }
-        else if(denuncia.getCategoria() == 2){
+        else if(denuncia.getCategoria().getInt(denuncia.getCategoria().getDescricao()) == 2){
             iconeCategoria.setImageResource(R.drawable.ic_sewer);
             textViewCategoria.setText("Equipamentos comunitários");
         }
@@ -118,9 +121,13 @@ public class DetalhesActivity extends AppCompatActivity {
         if(midiaFormat.equals("mp4")){
             videoViewMidia.setVisibility(View.VISIBLE);
             videoViewMidia.setVideoPath(path);
+            imageViewMidia.setVisibility(View.GONE);
+            btn_playMidia.setVisibility(View.VISIBLE);
         }
         else if(midiaFormat.equals("jpg")){
             imageViewMidia.setVisibility(View.VISIBLE);
+            videoViewMidia.setVisibility(View.GONE);
+            btn_playMidia.setVisibility(View.GONE);
 
             Bitmap bitmap = null;
             try {

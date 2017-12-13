@@ -61,7 +61,7 @@ public class DenunciaListViewAdapter extends BaseAdapter {
         descriptionTxt.setText(denuncias.get(i).getDescricao());
         catAndDate.setText(df.format(denuncias.get(i).getData()));
 
-        switch (denuncias.get(i).getCategoria()){
+        switch (denuncias.get(i).getCategoria().getInt(denuncias.get(i).getCategoria().getDescricao())){
             case 0:
                 catAndDate.setCompoundDrawablesWithIntrinsicBounds(null, context.getResources().getDrawable(R.drawable.ic_road) , null, null);
                 //catAndDate.setCompoundDrawablePadding(R.drawable.ic_road);

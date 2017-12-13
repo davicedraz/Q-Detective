@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.preference.PreferenceManager;
@@ -60,7 +61,7 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
 
     private List<Map<String, Object>> mapList;
     private boolean permisaoInternet = false;
-    private final String url = "http://35.226.50.35/QDetective/";
+    private final String url = "http://35.193.98.124/QDetective/";
     private ProgressDialog load;
 
     private void setPreferences(Context context){
@@ -89,7 +90,14 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
         switch (id){
             case R.id.request_list:
                 Log.d("ItemSelected", "request_list");
-                break;
+                getPermissaoDaInternet();
+                if (permisaoInternet) {
+                    DownloadDenuncias downloadDenuncias = new DownloadDenuncias();
+                    downloadDenuncias.execute();
+                }
+
+            break;
+
             case R.id.user_settings:
                 Intent intent = new Intent(this, EditUserActivity.class);
                 startActivity(intent);
@@ -117,7 +125,6 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
         setupDenucias();
 
         DenunciaListViewAdapter adapter = new DenunciaListViewAdapter(denuncias, this);
-
         denunciasListview.setAdapter(adapter);
 
         //abre o menu_denuncias_activity de contexto ao clicar em uma denuncia
@@ -242,7 +249,7 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
             UploadDenuncia upload = new UploadDenuncia();
             upload.execute(denuncia);
 
-            denunciasDatabase.removerDenuncia(denuncia.getId());
+//            denunciasDatabase.removerDenuncia(denuncia.getId());
             updateListview();
         }
     }
@@ -319,10 +326,10 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
         protected WebServiceUtils doInBackground(Denuncia... denuncias) {
             WebServiceUtils webService = new WebServiceUtils();
             Denuncia denuncia = denuncias[0];
-            String urlDados = url + "denuncias";
+            String urlDados = url + "rest/denuncias";
             if (webService.sendDenunciaJson(urlDados, denuncia)) {
-                urlDados = url + "arquivos/postFotoBase64";
-                webService.uploadImagemBase64(urlDados, new File(denuncia.getUriMidia()));
+                urlDados = url + "rest/arquivos";
+                webService.uploadImagemBase64(urlDados, new File(Uri.parse(denuncia.getUriMidia()).getPath()));
             }
             return webService;
         }
@@ -346,10 +353,10 @@ public class DenunciaActivity extends AppCompatActivity implements MenuAlertDial
         protected WebServiceUtils doInBackground(Long... ids) {
             WebServiceUtils webService = new WebServiceUtils();
             String id = (ids != null && ids.length == 1) ? ids[0].toString() : "";
-            List<Denuncia> denuncias = webService.getListaDenunciasJson(url, "denuncias", id);
+            List<Denuncia> denuncias = webService.getListaDenunciasJson(url, "rest/denuncias", id);
             for (Denuncia denuncia : denuncias) {
                 String path = getDiretorioDeSalvamento(denuncia.getUriMidia()).getPath();
-                webService.downloadImagemBase64(url + "arquivos", path, denuncia.getId());
+                webService.downloadImagemBase64(url + "rest/arquivos", path, denuncia.getId());
                 denuncia.setUriMidia(path);
             }
             return webService;

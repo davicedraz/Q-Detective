@@ -35,6 +35,7 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.samueldavi.q_detective.R;
+import com.samueldavi.q_detective.model.Categoria;
 import com.samueldavi.q_detective.model.DAO.DenunciaDAO;
 import com.samueldavi.q_detective.model.Denuncia;
 
@@ -95,7 +96,7 @@ public class DenunciaCadastroActivity extends AppCompatActivity{
     private void setupView() {
         if(editingDenuncia != null){
             description.setText(editingDenuncia.getDescricao());
-            category.setSelection(editingDenuncia.getCategoria());
+            category.setSelection(editingDenuncia.getCategoria().getInt(editingDenuncia.getCategoria().getDescricao()));
 
             String mediaPath = Uri.parse(editingDenuncia.getUriMidia()).toString();
 
@@ -283,7 +284,7 @@ public class DenunciaCadastroActivity extends AppCompatActivity{
 
 
                 if(editingDenuncia == null) {
-                    Denuncia denuncia = new Denuncia(descricao, data, longitude, latitude, uriMidia, usuario, categoria);
+                    Denuncia denuncia = new Denuncia(descricao, data, longitude, latitude, uriMidia, usuario, Categoria.getCategoria(categoria));
                     denunciaDatabase.salvarDenuncia(denuncia);
                 }else{
                     editingDenuncia.setDescricao(descricao);
@@ -292,7 +293,7 @@ public class DenunciaCadastroActivity extends AppCompatActivity{
                     editingDenuncia.setLongitude(longitude);
                     editingDenuncia.setUriMidia(uriMidia);
                     editingDenuncia.setUsuario(usuario);
-                    editingDenuncia.setCategoria(categoria);
+                    editingDenuncia.setCategoria(editingDenuncia.getCategoria().getCategoria(categoria));
                     denunciaDatabase.atualizarDenuncia(editingDenuncia);
                 }
 

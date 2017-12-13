@@ -16,20 +16,9 @@ public class Denuncia implements Serializable{
     private Double latitude;
     private String uriMidia;
     private String usuario;
-    private int categoria;
+    private Categoria categoria;
 
-
-    public Denuncia(String descricao, Date data, Double longitude, Double latitude, String uriMidia, String usuario, int categoria) {
-        this.descricao = descricao;
-        this.data = data;
-        this.longitude = longitude;
-        this.latitude = latitude;
-        this.uriMidia = uriMidia;
-        this.usuario = usuario;
-        this.categoria = categoria;
-    }
-
-    public Denuncia(Integer id, String descricao, Date data, Double longitude, Double latitude, String uriMidia, String usuario, int categoria) {
+    public Denuncia(Integer id, String descricao, Date data, Double longitude, Double latitude, String uriMidia, String usuario, Categoria categoria) {
         this.id = id;
         this.descricao = descricao;
         this.data = data;
@@ -39,6 +28,17 @@ public class Denuncia implements Serializable{
         this.usuario = usuario;
         this.categoria = categoria;
     }
+
+    public Denuncia(String descricao, Date data, Double longitude, Double latitude, String uriMidia, String usuario, Categoria categoria) {
+        this.descricao = descricao;
+        this.data = data;
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.uriMidia = uriMidia;
+        this.usuario = usuario;
+        this.categoria = categoria;
+    }
+
 
     public Integer getId() {
         return id;
@@ -96,11 +96,11 @@ public class Denuncia implements Serializable{
         this.usuario = usuario;
     }
 
-    public int getCategoria() {
+    public Categoria getCategoria() {
         return categoria;
     }
 
-    public void setCategoria(int categoria) {
+    public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
     }
 }

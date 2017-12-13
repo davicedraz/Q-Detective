@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.samueldavi.q_detective.model.Categoria;
 import com.samueldavi.q_detective.model.Denuncia;
 import com.samueldavi.q_detective.model.Usuario;
 import com.samueldavi.q_detective.resources.DatabaseHelper;
@@ -108,7 +109,7 @@ public class DenunciaDAO {
             values.put(DatabaseHelper.DenunciaDB.LATITUDE, denuncia.getLatitude());
             values.put(DatabaseHelper.DenunciaDB.URIMIDIA, denuncia.getUriMidia());
             values.put(DatabaseHelper.DenunciaDB.USUARIO, denuncia.getUsuario());
-            values.put(DatabaseHelper.DenunciaDB.CATEGORIA, denuncia.getCategoria());
+            values.put(DatabaseHelper.DenunciaDB.CATEGORIA, denuncia.getCategoria().getDescricao());
 
             db = helper.getWritableDatabase();
 
@@ -131,7 +132,7 @@ public class DenunciaDAO {
             values.put(DatabaseHelper.DenunciaDB.LATITUDE, denuncia.getLatitude());
             values.put(DatabaseHelper.DenunciaDB.URIMIDIA, denuncia.getUriMidia());
             values.put(DatabaseHelper.DenunciaDB.USUARIO, denuncia.getUsuario());
-            values.put(DatabaseHelper.DenunciaDB.CATEGORIA, denuncia.getCategoria());
+            values.put(DatabaseHelper.DenunciaDB.CATEGORIA, denuncia.getCategoria().getInt(denuncia.getCategoria().getDescricao()));
 
             db = helper.getWritableDatabase();
             db.update(DatabaseHelper.DenunciaDB.TABELA,
@@ -161,9 +162,23 @@ public class DenunciaDAO {
         Double latitude = cursor.getDouble(cursor.getColumnIndex(DatabaseHelper.DenunciaDB.LATITUDE));
         String uriMidia = cursor.getString(cursor.getColumnIndex(DatabaseHelper.DenunciaDB.URIMIDIA));
         String usuario = cursor.getString(cursor.getColumnIndex(DatabaseHelper.DenunciaDB.USUARIO));
-        int categoria = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.DenunciaDB.CATEGORIA));
+        int categoria = (cursor.getInt(cursor.getColumnIndex(DatabaseHelper.DenunciaDB.CATEGORIA)));
 
-        Denuncia denuncia = new Denuncia(id, descricao, data, longitude, latitude, uriMidia, usuario, categoria);
+        Categoria cat;
+
+        if(categoria == 0){
+            cat = Categoria.VIAS_PUBLICAS;
+        }else if(categoria == 1){
+            cat = Categoria.EQUIPAMENTOS_COMUNICATARIOS;
+        }
+        else if(categoria == 2){
+            cat = Categoria.LIMPEZA_URBANA;
+        }else{
+            cat = null;
+        }
+
+        Denuncia denuncia = new Denuncia(id, descricao, data, longitude, latitude, uriMidia, usuario, cat);
+
         return denuncia;
     }
 

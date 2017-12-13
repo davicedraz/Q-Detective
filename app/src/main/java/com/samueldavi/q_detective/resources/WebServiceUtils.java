@@ -1,10 +1,10 @@
 package com.samueldavi.q_detective.resources;
 
+import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.util.Base64;
-
-import com.samueldavi.q_detective.model.Denuncia;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -14,7 +14,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-
+import com.samueldavi.q_detective.model.Denuncia;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -39,9 +39,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by davic on 12/12/2017.
- */
 
 public class WebServiceUtils {
 
@@ -69,8 +66,8 @@ public class WebServiceUtils {
             try {
                 GsonBuilder b = new GsonBuilder().registerTypeAdapter(Date.class, new DateTypeAdapter());
                 Gson gson = b.create();
-                Denuncia[] denuncia = gson.fromJson(json, Denuncia[].class);
-                denuncias = new ArrayList<>(Arrays.asList(denuncia));
+                Denuncia[] denuncias = gson.fromJson(json, Denuncia[].class);
+                this.denuncias = new ArrayList<>(Arrays.asList(denuncias));
                 respostaServidor = "Download realizado com sucesso.";
             } catch (Exception e) {
                 e.printStackTrace();
@@ -175,6 +172,7 @@ public class WebServiceUtils {
         return false;
     }
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     public boolean uploadImagemBase64(String url, File foto) {
         try {
             byte[] byteArray = loadFile(foto);
