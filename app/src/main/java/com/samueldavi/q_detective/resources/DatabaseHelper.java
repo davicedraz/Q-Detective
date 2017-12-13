@@ -25,7 +25,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
     public static class DenunciaDB {
         public static final String TABELA= "denuncia";
-        public static final String _ID = "id";
+        public static final String _ID = "_id";
         public static final String DESCRICAO = "descricao";
         public static final String DATA = "data";
         public static final String LONGITUDE = "longitude";
